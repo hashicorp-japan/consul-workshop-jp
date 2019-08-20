@@ -1,0 +1,116 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Consul installation script
+$install_consul = <<SCRIPT
+
+echo "Installing dependencies ..."
+sudo apt-get update
+sudo apt-get install -y unzip curl jq dnsutils ntp
+
+echo "Setting correct time"
+sudo dpkg-reconfigure ntp
+ntpq -p
+ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+
+echo "Determining Consul version to install ..."
+CHECKPOINT_URL="https://checkpoint-api.hashicorp.com/v1/check"
+if [ -z "$CONSUL_DEMO_VERSION" ]; then
+    CONSUL_DEMO_VERSION=$(curl -s "${CHECKPOINT_URL}"/consul | jq .current_version | tr -d '"')
+fi
+
+echo "Fetching Consul version ${CONSUL_DEMO_VERSION} ..."
+cd /tmp/
+curl -s https://releases.hashicorp.com/consul/${CONSUL_DEMO_VERSION}/consul_${CONSUL_DEMO_VERSION}_linux_amd64.zip -o consul.zip
+
+echo "Installing Consul version ${CONSUL_DEMO_VERSION} ..."
+unzip consul.zip
+sudo chmod +x consul
+sudo mv consul /usr/bin/consul
+
+sudo mkdir -p /etc/consul.d
+sudo chmod a+w /etc/consul.d
+
+SCRIPT
+
+# for consul server 
+$consul_server_setup = <<SCRIPT
+
+echo "Starting consul agent in server mode"
+nohup consul agent -server -bootstrap-expect=1 -bind=${SERVER_IP} -data-dir=/tmp/consul -config-dir=/etc/consul.d 1> /tmp/consul.log 2> /tmp/consul_err.log &
+
+SCRIPT
+
+# for consul client 
+$consul_client_setup = <<SCRIPT
+
+echo "Starting consul agent in client mode"
+nohup consul agent -bind=$(hostname -I | cut -f 2 -d ' ') -data-dir=/tmp/consul -retry-join=${SERVER_IP} -config-dir=/etc/consul.d 1> /tmp/consul.log 2> /tmp/consul_err.log &
+
+SCRIPT
+
+# Specify a Consul version
+CONSUL_DEMO_VERSION = ENV['CONSUL_DEMO_VERSION']
+
+# Specify a custom Vagrant box for the demo
+DEMO_BOX_NAME = ENV['DEMO_BOX_NAME'] || "bento/ubuntu-16.04"
+
+# Specify a network addresses
+SERVER_IP  = "172.20.20.3"
+CLIENT1_IP = "172.20.20.4"
+CLIENT2_IP = "172.20.20.5" 
+
+# Vagrantfile API/syntax version.
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = DEMO_BOX_NAME
+
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  end
+
+  config.vm.provision "shell", 
+    inline: $install_consul,
+      env: {'CONSUL_DEMO_VERSION' => CONSUL_DEMO_VERSION}
+
+  config.vm.define "s1" do |s1|
+    s1.vm.hostname = "server1"
+    s1.vm.network "private_network", ip: SERVER_IP, auto_correct: true
+	  s1.vm.provision "shell", 
+	    inline: $consul_server_setup, 
+        privileged: true,
+        env: {'SERVER_IP' => SERVER_IP }
+    config.vm.provider "virtualbox" do |v|
+      v.memory = 512
+      v.cpus = 1
+    end
+  end
+
+  config.vm.define "c1" do |c1|
+    c1.vm.hostname = "client1"
+    c1.vm.network "private_network", ip: CLIENT1_IP, auto_correct: true
+	  c1.vm.provision "shell", 
+	    inline: $consul_client_setup, 
+        privileged: true,
+        env: {'SERVER_IP' => SERVER_IP }
+    config.vm.provider "virtualbox" do |v|
+      v.memory = 256
+      v.cpus = 1
+    end
+  end
+  
+  config.vm.define "c2" do |c2|
+    c2.vm.hostname = "client2"
+    c2.vm.network "private_network", ip: CLIENT2_IP, auto_correct: true
+	  c2.vm.provision "shell", 
+	    inline: $consul_client_setup, 
+        privileged: true,
+        env: {'SERVER_IP' => SERVER_IP }
+    config.vm.provider "virtualbox" do |v|
+      v.memory = 256
+      v.cpus = 1
+    end
+  end
+
+end
