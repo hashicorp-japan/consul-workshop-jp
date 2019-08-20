@@ -36,10 +36,10 @@ Vagrantが自動的にVMやConsulのバイナリをダウンロードしてク�
     - `vagrant ssh c1`
 
 * Client2
-  - IP address: 172.20.20.4
+  - IP address: 172.20.20.5
   - Hostname: Client1
   - Vagrantからのログイン方法：
-    - `vagrant ssh c1`
+    - `vagrant ssh c2`
 
 ## 動作確認
 
