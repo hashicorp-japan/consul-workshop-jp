@@ -8,6 +8,6 @@
 1. Service segmentation (Connect feature)
 1. Service configuration
 1. Consul clusterの構築
-	* [AWS (クラウド上へ構築）](aseets/cluster_setup/aws/README.md)
+	* [AWS (クラウド上へ構築）](assets/cluster_setup/aws/README.md)
 	* GCP
-	* [Vagrant（ローカル環境へ構築）](aseets/cluster_setup/vagrant/README.md)
+	* [Vagrant（ローカル環境へ構築）](assets/cluster_setup/vagrant/README.md)
