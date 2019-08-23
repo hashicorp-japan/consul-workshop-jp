@@ -2,6 +2,28 @@
 
 ConsulにDevモードという、複雑な設定や準備の必要なく、簡単にConsul機能を試すモードがあります。起動方法は簡単で、Consulのバイナリをダウンロードし、以下のコマンドを叩くだけです。
 
+## Consulのインストール
+
+[こちら](https://www.consul.io/downloads.html)のWebサイトからご自身のOSに合ったものをダウンロードしてください。
+
+パスを通します。以下はmacOSの例ですが、OSにあった手順でvaultコマンドにパスを通します。
+
+```shell
+$ mv /path/to/consul /usr/local/bin
+$ chmod +x /usr/local/bin/consul
+```
+新しい端末を立ち上げ、Vaultのバージョンを確認します。
+
+```console
+$ consul --version
+Consul v1.5.1
+```
+
+これでインストールは完了です。
+
+## 初めてのConsul
+
+次にVaultサーバを立ち上げ、ConsulのService Discoveryの機能を試してみます。
 
 ```shell
 consul agent -dev
@@ -11,8 +33,8 @@ consul agent -dev
 
 それでは上記のコマンドを叩いてみましょう。
 
-```shell
-$consul agent -dev
+```console
+$ consul agent -dev
 ==> Starting Consul agent...
 ==> Consul agent running!
            Version: 'v1.5.1+ent'
@@ -82,8 +104,8 @@ Client addressは、Consulの機能にアクセスしたいクライアントと
 
 それでは以下のコマンドを打ってみましょう。
 
-```shell
-$consul members
+```console
+$ consul members
 Node                 Address         Status  Type    Build      Protocol  DC   Segment
 masa-mackbook.local  127.0.0.1:8301  alive   server  1.5.1+ent  2         dc1  <all>
 ```
@@ -99,20 +121,20 @@ Consulの持つ機能の一つにService Registration（サービス登録）や
 
 まず、webというサービスがあり、IPアドレスが10.0.0.10のノードポート8080番で動いてるとします。ちなみに、ここでは実際にこのサービスが動いているかは気にしません。このサービスを登録するには以下のコマンドを打ちます。
 
-```shell
-$consul services register -name=web -address=10.0.0.10 -port=8080
+```console
+$ consul services register -name=web -address=10.0.0.10 -port=8080
 Registered service: web
 ```
 
 これでサービスが登録されました。以下のコマンドで登録されているサービスの一覧が出力できます。
 
-```shell
-$consul catalog services
+```console
+$ consul catalog services
 consul
 web
 ```
 
-ちゃんと`web`とうサービスが登録されています。
+ちゃんと`web`とサービスが登録されています。
 
 ## Service Discovery
 
@@ -125,8 +147,8 @@ web
 ここでは`dig`コマンドによるDNS queryを使ってみましょう。ConsulのDNSはポート8600番なので、そこに対してQueryを発行します。また、サービス名は`<service名>.service.consul`という形式でLookupできます。
 
 
-```shell
-$dig @127.0.0.1 -p 8600 web.service.consul
+```console
+$ dig @127.0.0.1 -p 8600 web.service.consul
 
 ; <<>> DiG 9.10.6 <<>> @127.0.0.1 -p 8600 web.service.consul
 ; (1 server found)
