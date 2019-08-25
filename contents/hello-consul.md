@@ -23,7 +23,7 @@ Consul v1.5.1
 
 ## ConsulをDevモードで触ってみる
 
-次にVaultサーバを立ち上げ、ConsulのService Discoveryの機能を試してみます。
+次にConsulサーバを立ち上げ、ConsulのService Discoveryの機能を試してみます。
 
 ```shell
 consul agent -dev
