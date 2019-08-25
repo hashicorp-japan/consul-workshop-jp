@@ -346,3 +346,7 @@ Takayukis-MBP.node.dc1.consul. 0 IN	TXT	"consul-network-segment="
 ;; WHEN: Sun Aug 25 22:07:48 JST 2019
 ;; MSG SIZE  rcvd: 251
 ```
+
+正しい状態に戻りました。ConsulのService Registryの機能を使うことでプラットフォームに依存せずサービス名ベースでの相互接続やサービス間のヘルスチェックが可能です。実際のアプリケーションからはConsulを経由して、APIやデータストアなどのシステムコンポーネントにアクセスすることが出来ます。
+
+また、Service RegistryだけでなくService Meshを実現するための様々な機能を備えています。

@@ -3,9 +3,9 @@
 ## Agenda
 
 1. [初めてのConsul](contents/hello-consul.md)
-1. [Service registration & discovery](contens/srd.md)
-1. Service segmentation (Connect feature)
-1. Service configuration
+1. [Service Registration](contens/srd.md)
+1. [Service Configuration](contents/scf.md)
+1. [Service Mesh](contents/mesh.md)
 1. Kubernetes連携
 1. 運用系機能色々
 1. Enterprise版機能の紹介
