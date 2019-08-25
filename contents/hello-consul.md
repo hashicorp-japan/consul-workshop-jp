@@ -6,13 +6,13 @@ ConsulにDevモードという、複雑な設定や準備の必要なく、簡�
 
 [こちら](https://www.consul.io/downloads.html)のWebサイトからご自身のOSに合ったものをダウンロードしてください。
 
-パスを通します。以下はmacOSの例ですが、OSにあった手順でvaultコマンドにパスを通します。
+パスを通します。以下はmacOSの例ですが、OSにあった手順で consulコマンドにパスを通します。
 
 ```shell
 $ mv /path/to/consul /usr/local/bin
 $ chmod +x /usr/local/bin/consul
 ```
-新しい端末を立ち上げ、Vaultのバージョンを確認します。
+新しい端末を立ち上げ、Consulのバージョンを確認します。
 
 ```console
 $ consul --version
