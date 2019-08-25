@@ -1,4 +1,4 @@
-# ConsulをDevモードで触ってみる
+# 初めてのConsul
 
 ConsulにDevモードという、複雑な設定や準備の必要なく、簡単にConsul機能を試すモードがあります。起動方法は簡単で、Consulのバイナリをダウンロードし、以下のコマンドを叩くだけです。
 
@@ -21,7 +21,7 @@ Consul v1.5.1
 
 これでインストールは完了です。
 
-## 初めてのConsul
+## ConsulをDevモードで触ってみる
 
 次にVaultサーバを立ち上げ、ConsulのService Discoveryの機能を試してみます。
 
