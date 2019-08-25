@@ -3,7 +3,7 @@
 ## Agenda
 
 1. [初めてのConsul](contents/hello-consul.md)
-1. [Service Registration](contens/srd.md)
+1. [Service Discovery](contents/srd.md)
 1. [Service Mesh](contents/mesh.md)
 1. [Service Configuration](contents/scf.md)
 1. Kubernetes連携
