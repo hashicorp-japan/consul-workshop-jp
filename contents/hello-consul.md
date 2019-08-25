@@ -176,9 +176,28 @@ web.service.consul.	0	IN	TXT	"consul-network-segment="
 ```
 
 登録した通り`10.0.0.10`が返ってきました。
-ここでは、存在していないサービスを登録してService discoveryを試しましたが、現実世界においては、確実に存在しているサービスを登録する必要があります。また、そのサービスが生きているか死んでいるかをチェックするHealth checkも行う必要があります。ConsulによるHealth checkや他のサービス登録方法などは別のワークショップで行います。
+ここでは、存在していないサービスを登録してService discoveryを試しましたが、現実世界においては、確実に存在しているサービスを登録する必要があります。また、そのサービスが正常に稼働しているかをチェックするHealth checkも行う必要があります。ConsulによるHealth checkや他のサービス登録方法などは別のワークショップで行います。
 
+## 通常モードでConsulを起動する
 
+次に`dev`モードではなく通常モードでConsulを起動してみましょう。起動には`consul`コマンドの引数に設定を記述するかjsonや`HashiCorp Configuration Language`(HCL)でファイルとして記述するなどの方法があります。
 
+ここでは引数に設定してみます。`-data-dir`の値はご自身の環境に合わせて好きな場所をして下さい。devモードで起動しているターミナルを止めて次を実行します。
 
+```shell
+$ consul agent -server -bind=127.0.0.1 \
+-client=127.0.0.1 \
+-data-dir=/Users/kabu/hashicorp/consul/localdata \
+-bootstrap-expect=1 -ui
+```
 
+同様にConsulが起動するでしょう。最後にWebブラウザにアクセスしてみます。`http://127.0.0.1:8500`にアクセスしてみましょう。
+
+`Services`のタブにConsulと表示され、`Nodes`のタブにご自身のラップトップが登録されていることがわかるでしょう。
+
+以降の章ではこの環境を使って実際の機能を試してみます。
+
+## 参考リンク
+* [Consul Command](https://www.consul.io/docs/commands/index.html)
+* [Consul Agent](https://www.consul.io/docs/agent/basics.html)
+* [Consul Configuration](https://www.consul.io/docs/agent/options.html)
