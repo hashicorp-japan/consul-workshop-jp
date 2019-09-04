@@ -345,3 +345,6 @@ Hogeのコンテナに負荷分散されるはずです。
 
 このようにConsul Templateを利用するとConsul内にある様々なサービスとそれに関連する外部の設定ファイルを自動で更新同期することが可能となります。またConsul TemplateはVaultとも連携可能でVaultが発行する暗号化のキーや証明書を同様に自動で配布することができます。
 
+## 参考リンク
+* [KV](https://www.consul.io/docs/agent/kv.html)
+* [Consul Template](https://github.com/hashicorp/consul-template)

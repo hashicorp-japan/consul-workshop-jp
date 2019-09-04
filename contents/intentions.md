@@ -14,7 +14,6 @@ ConsulではService Discovery以外にもService Meshを実現するための様
 
 まずはIntentionsを利用したConsulのFirewall機能を試してみましょう。
 
-
 ### 事前準備
 
 この手順を完了させるためには`socat`と`netcat`というツールが必要です。Socatを使ってエコーサーバを立ち上げ、Netcatで接続をしてデータの送受信ををします。
@@ -32,8 +31,8 @@ Sidecar間はTLS通信となり通常証明書が必要です。Consulには[証
 
 ```shell
 $ consul agent -dev \
--data-dir=/Users/kabu/hashicorp/consul/localdata \
--config-dir=/Users/kabu/workspace/consul.d
+-data-dir=/path/to/consul-workshop/localdata \
+-config-dir=/path/to/consul-workshop/consul.d
 ```
 
 別ターミナルで`socat`を起動します。
@@ -45,7 +44,7 @@ $ socat -v tcp-l:8181,fork exec:"/bin/cat"
 Consulの設定ファイルを追加して設定をリロードします。
 
 ```shell
-$ cat << EOF > /path/to/workspace/consul.d/socat.json 
+$ cat << EOF > /path/to/consul-workshop/consul.d/socat.json 
 {
   "service": {
     "name": "socat",
@@ -67,7 +66,7 @@ $ consul connect proxy -sidecar-for socat
 このサービスとやり取りをする別のサービスを立ち上げます。
 
 ```shell
-$ cat << EOF > /path/to/workspace/consul.d/web.json 
+$ cat << EOF > /path/to/consul-workshop/consul.d/web.json 
 {"service": {
     "name": "web",
     "port": 8080,
@@ -135,3 +134,8 @@ $ nc 127.0.0.1 9191
 ```
 
 メッセージが出ないのでわかりにくいですがアクセス制御で弾かれて接続が不可能になっています。
+
+## 参考リンク
+* [Intentions](https://www.consul.io/docs/connect/intentions.html)
+* [Proxy](https://www.consul.io/docs/connect/proxies.html)
+* [CA Management](https://www.consul.io/docs/connect/ca.html)

@@ -67,6 +67,7 @@ $ consul services register \
 $ consul services register \
 -name=nginx \
 -id=nginx-bar \
+-address=127.0.0.1 \
 -port=9090 \
 -tag=nginx
 ```
@@ -183,14 +184,14 @@ $ cat << EOF > check_bar.json
 EOF
 ```
 
-上記の設定を反映させてみます。
+`http`で指定したエンドポイントに対して10秒に一度ヘルスチェックを行う設定です。上記の設定を反映させてみます。
 
 ```shell
 $ curl -X PUT --data-binary @check_foo.json http://127.0.0.1:8500/v1/agent/service/register
 $ curl -X PUT --data-binary @check_bar.json http://127.0.0.1:8500/v1/agent/service/register
 ```
 
-ヘルスチェックの確認をしてみましょう。
+ヘルスチェックの確認をしてみましょう。GUIでも見ることができます。
 ```shell
 $ curl http://127.0.0.1:8500/v1/health/checks/nginx | jq .
 ```
@@ -350,3 +351,7 @@ Takayukis-MBP.node.dc1.consul. 0 IN	TXT	"consul-network-segment="
 正しい状態に戻りました。ConsulのService Registryの機能を使うことでプラットフォームに依存せずサービス名ベースでの相互接続やサービス間のヘルスチェックが可能です。実際のアプリケーションからはConsulを経由して、APIやデータストアなどのシステムコンポーネントにアクセスすることが出来ます。
 
 また、Service RegistryだけでなくService Meshを実現するための様々な機能を備えています。
+
+## 参考リンク
+* [DNS Interface](https://www.consul.io/docs/agent/dns.html)
+* [Health Checks](https://www.consul.io/docs/agent/checks.html)
