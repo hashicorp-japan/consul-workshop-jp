@@ -185,13 +185,14 @@ web.service.consul.	0	IN	TXT	"consul-network-segment="
 ここでは引数に設定してみます。`-data-dir`の値はご自身の環境に合わせて好きな場所をして下さい。devモードで起動しているターミナルを止めて次を実行します。
 
 ```shell
-$ mkdir /path/to/workspace/consul.d
+$ mkdir -p consul-workshop/consul.d
+$ cd consul-workshop
 $ consul agent -server -bind=127.0.0.1 \
 -client=127.0.0.1 \
--data-dir=/Users/kabu/hashicorp/consul/localdata \
+-data-dir=/path/to/consul-workshop/localdata \
 -bootstrap-expect=1 -ui \
 -dns-port=8600 \
--config-dir=/Users/kabu/workspace/consul.d
+-config-dir=/path/to/consul-workshop/consul.d
 ```
 
 同様にConsulが起動するでしょう。最後にWebブラウザにアクセスしてみます。`http://127.0.0.1:8500`にアクセスしてみましょう。
