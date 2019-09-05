@@ -10,15 +10,15 @@ Consulの機能は多岐に渡りますが、Service Discoveryはコアの機能
 
 ```shell
 $ git clone https://github.com/hashicorp-japan/consul-workshop
-$ cd consul-workshop/assets
+$ cd consul-workshop/assets/nginx
 
 $ sed -i -r "s/REPLACE/Foo/g" index.html
-$ docker build -t nginx-image .
-$ docker run --name nginx-foo -d -p 8080:80 nginx-image
+$ docker build -t nginx-foo .
+$ docker run --name nginx-foo -d -p 8080:80 nginx-foo
 
 $ sed -i -r "s/Foo/Bar/g" index.html
-$ docker build -t nginx-image .
-$ docker run --name nginx-bar -d -p 9090:80 nginx-image
+$ docker build -t nginx-bar .
+$ docker run --name nginx-bar -d -p 9090:80 nginx-bar
 ```
 
 起動を確認しておきましょう。
@@ -26,8 +26,8 @@ $ docker run --name nginx-bar -d -p 9090:80 nginx-image
 ```console
 $ docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
-109f9530196a        nginx-image         "nginx -g 'daemon of…"   16 seconds ago      Up 15 seconds       0.0.0.0:9090->80/tcp   nginx-bar
-ac31d5eec216        nginx-image         "nginx -g 'daemon of…"   27 seconds ago      Up 26 seconds       0.0.0.0:8080->80/tcp   nginx-foo
+109f9530196a        nginx-bar         "nginx -g 'daemon of…"   16 seconds ago      Up 15 seconds       0.0.0.0:9090->80/tcp   nginx-bar
+ac31d5eec216        nginx-foo        "nginx -g 'daemon of…"   27 seconds ago      Up 26 seconds       0.0.0.0:8080->80/tcp   nginx-foo
 ```
 
 curlで両インスタンスからのレスポンスを確認ておきます。
@@ -313,7 +313,7 @@ Takayukis-MBP.node.dc1.consul. 0 IN	TXT	"consul-network-segment="
 一つのサーバのみ返ってきており、Consulが停止したサーバを自動で切り離したことがわかります。再起動しましょう。
 
 ```shell
-$ docker run --name nginx-foo -d -p 8080:80 nginx-image
+$ docker run --name nginx-foo -d -p 8080:80 nginx-foo
 ```
 
 ```console
