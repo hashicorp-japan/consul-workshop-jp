@@ -313,7 +313,7 @@ Takayukis-MBP.node.dc1.consul. 0 IN	TXT	"consul-network-segment="
 一つのサーバのみ返ってきており、Consulが停止したサーバを自動で切り離したことがわかります。再起動しましょう。
 
 ```shell
-$ docker run --name nginx-foo -d -p 8080:80 nginx-image
+$ docker run --name nginx-foo -d -p 8080:80 nginx-foo
 ```
 
 ```console
