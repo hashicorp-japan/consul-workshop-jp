@@ -54,7 +54,7 @@ Consul TemplateはConsul配下のデータセンター、ノードやサービ�
 まずは環境の情報の取得をしてみましょう。
 
 ```shell
-cat <<EOF > my-env-consul.tpl
+cat <<EOF > all-services.tpl
 {{ range datacenters }}
 {{ . }}{{ end }}
 
@@ -77,7 +77,7 @@ $ consul-template -template="all-services.tpl:output/all-services.txt" -once
 `-once`オプションをつけることで一度きりの実行が可能です。
 
 ```console
-$ cat my-env.txt
+$ cat output/all-services.txt
 dc1
 dc2
 
