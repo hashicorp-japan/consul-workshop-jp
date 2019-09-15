@@ -144,7 +144,7 @@ $ curl localhost:9090/actuator | jq
 Consul KVに設定を格納します。
 
 
-```shell
+```console
 $ consul kv put config/application/data @app_config.yml
 $ consul kv get config/application/data
 
