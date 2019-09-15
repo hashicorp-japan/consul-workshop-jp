@@ -1,29 +1,4 @@
-# Consul Service Configuration
-
-ConsulにはKey Valueのデータストアが内包されており、これを利用することで様々な処理を行うことができます。
-
-* 各マイクロサービスへのコンフィグレーションの配布
-* Consul管理は以下のサービスのコンフィグレーションの自動アップデート(Consul Template)
-* KVSの値を監視して更新などをトリガーにしたイベント処理(Watch)
-
-などです。
-
-Watchは別の章で扱いますのでここではConsul Templateを試してみたいと思います。
-
-
-## Consul KVの使い方
-
-まず、Consul KVを使って簡単なデータのput/getをしてみましょう。
-
-```console 
-$ consul kv put my-first-kv/consulis useful
-$ consul kv get my-first-kv/consulis
-useful
-```
-
-`consulis`というキーに`useful`という値を入れて取り出しました。とても簡単です。Consul内のデータはConsulクラスタ内のノード同士でレプリケーションし、ユーザは意識することなくデータの冗長性を保つことができます。
-
-### Consul Template
+# Consul Template
 
 Consul TemplateはこのKVを応用したトリガー処理の一つです。テンプレートに更新内容の雛形を定義しておき、KVに更新が出た際にそれを指定し、その内容を指定したファイルに埋め込むことのできる機能です。
 
