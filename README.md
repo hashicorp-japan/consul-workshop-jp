@@ -4,7 +4,7 @@
 
 1. [初めてのConsul](contents/hello-consul.md)
 1. [Service Discovery](contents/srd.md)
-1. [Service Configuration]
+1. Service Configuration
 	* [Distributed Configration](contents/distributed-config.md)
 	* [Consul Template](contents/scf.md)
 1. Service Mesh
