@@ -38,7 +38,9 @@ $ git clone https://github.com/tkaburagi/consul-intentions-demo
 この流れをまずはSidecar Proxyの設定を作っていきます。
 
 ```shell
+$ cd consul-intentions-demo
 $ mkdir consul.d
+$ cd consul.d
 ```
 
 この中に4つのファイルを作っていきます。それぞれがサイドカーの設定となります。
@@ -237,6 +239,9 @@ $ curl http://127.0.0.1:1010
 Hashi
 
 $ curl http://127.0.0.1:8080
+HashiCorp Japan
+
+$ curl http://127.0.0.1:9090
 HashiCorp Japan
 ```
 
