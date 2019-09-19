@@ -20,8 +20,8 @@ $ docker-compose up
 ```console
 $ docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
-109f9530196a        nginx-bar         "nginx -g 'daemon of…"   16 seconds ago      Up 15 seconds       0.0.0.0:9090->80/tcp   nginx-bar
-ac31d5eec216        nginx-foo        "nginx -g 'daemon of…"   27 seconds ago      Up 26 seconds       0.0.0.0:8080->80/tcp   nginx-foo
+109f9530196a        nginx_bar         "nginx -g 'daemon of…"   16 seconds ago      Up 15 seconds       0.0.0.0:9090->80/tcp   nginx-bar
+ac31d5eec216        nginx-foo        "nginx -g 'daemon of…"   27 seconds ago      Up 26 seconds       0.0.0.0:8080->80/tcp   nginx_foo
 ```
 
 curlで両インスタンスからのレスポンスを確認ておきます。
@@ -49,8 +49,8 @@ $ curl 127.0.0.1:9090/index.html
 ```shell
 $ consul services register \
 -name=nginx \
--id=nginx-foo \
--address=host.docker.internal \
+-id=nginx_foo \
+-address=127.0.0.1 \
 -port=8080 \
 -tag=nginx
 ```
@@ -60,8 +60,8 @@ $ consul services register \
 ```shell
 $ consul services register \
 -name=nginx \
--id=nginx-bar \
--address=host.docker.internal \
+-id=nginx_bar \
+-address=127.0.0.1 \
 -port=9090 \
 -tag=nginx
 ```
@@ -149,10 +149,10 @@ Takayukis-MBP.node.dc1.consul. 0 IN	TXT	"consul-network-segment="
 ```shell
 $ cat << EOF > check_foo.json 
 {
-  "ID": "nginx-foo",
+  "ID": "nginx_foo",
   "Name": "nginx",
   "Address": "127.0.0.1",
-  "Port": 80,
+  "Port": 8080,
   "check": {
     "http": "http://127.0.0.1:8080",
     "interval": "10s",
@@ -165,10 +165,10 @@ EOF
 ```shell
 $ cat << EOF > check_bar.json 
 {
-  "ID": "nginx-bar",
+  "ID": "nginx_bar",
   "Name": "nginx",
   "Address": "127.0.0.1",
-  "Port": 80,
+  "Port": 9090,
   "check": {
     "http": "http://127.0.0.1:9090",
     "interval": "10s",
@@ -229,7 +229,7 @@ $ curl http://127.0.0.1:8500/v1/health/checks/nginx | jq .
 次にfooのコンテナを停止させてみます。
 
 ```shell
-$ docker rm -f nginx-foo
+$ docker rm -f nginx_foo_1
 ```
 
 再度確認してみます。
@@ -276,7 +276,7 @@ $ curl http://127.0.0.1:8500/v1/health/checks/nginx | jq .
 fooのコンテナの`status`がCriticalに変化しています。この状態でdigるとどうなるでしょうか。
 
 ```shell
-$ dig @192.168.3.3 -p 8600 nginx.service.consul
+$ dig @127.0.0.1 -p 8600 nginx.service.consul SRV
 
 ; <<>> DiG 9.10.6 <<>> @127.0.0.1 -p 8600 nginx.service.consul. SRV
 ; (1 server found)
@@ -307,7 +307,7 @@ Takayukis-MBP.node.dc1.consul. 0 IN	TXT	"consul-network-segment="
 一つのサーバのみ返ってきており、Consulが停止したサーバを自動で切り離したことがわかります。再起動しましょう。
 
 ```shell
-$ docker run --name nginx-foo -d -p 8080:80 nginx-foo
+$ docker-compose up
 ```
 
 ```console
