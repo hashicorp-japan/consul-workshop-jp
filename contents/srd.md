@@ -9,16 +9,10 @@ Consulの機能は多岐に渡りますが、Service Discoveryはコアの機能
 まずDockerで二つのインタンスを起動させます。
 
 ```shell
-$ git clone https://github.com/hashicorp-japan/consul-workshop
-$ cd consul-workshop/assets/nginx
+$ git clone https://github.com/tkaburagi/nginx
+$ cd nginx
 
-$ sed -i -r "s/REPLACE/Foo/g" index.html
-$ docker build -t nginx-foo .
-$ docker run --name nginx-foo -d -p 8080:80 nginx-foo
-
-$ sed -i -r "s/Foo/Bar/g" index.html
-$ docker build -t nginx-bar .
-$ docker run --name nginx-bar -d -p 9090:80 nginx-bar
+$ docker-compose up
 ```
 
 起動を確認しておきましょう。
@@ -56,7 +50,7 @@ $ curl 127.0.0.1:9090/index.html
 $ consul services register \
 -name=nginx \
 -id=nginx-foo \
--address=127.0.0.1 \
+-address=host.docker.internal \
 -port=8080 \
 -tag=nginx
 ```
@@ -67,7 +61,7 @@ $ consul services register \
 $ consul services register \
 -name=nginx \
 -id=nginx-bar \
--address=127.0.0.1 \
+-address=host.docker.internal \
 -port=9090 \
 -tag=nginx
 ```
