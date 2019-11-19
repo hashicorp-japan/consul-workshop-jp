@@ -48,6 +48,7 @@ $ cd consul.d
 `sidecar-hashicorpjapanapp.json`
 
 ```json
+cat << EOF > sidecar-hashicorpjapanapp.json`
 {
   "service": {
     "name": "hashicorpjapanapp",
@@ -79,6 +80,7 @@ $ cd consul.d
     }
   }
 }
+EOF
 ```
 
 `hashiapp`と`corpapp`をUpstreamのDestinationとして設定しています。Proxyによりこれらのサービスにリクエストが振られます。
@@ -86,6 +88,7 @@ $ cd consul.d
 `sidecar-hashiapp.json`
 
 ```json
+cat << EOF > idecar-hashiapp.json
 {
   "service": {
     "name": "hashiapp",
@@ -107,6 +110,7 @@ $ cd consul.d
     }
   }
 }
+EOF
 ```
 
 `hashiapp`はUpstreamは行いませんのでHealtcheckのみの設定です。
@@ -114,6 +118,7 @@ $ cd consul.d
 `sidecar-corpapp.json`
 
 ```json
+cat << EOF > sidecar-corpapp.json
 {
   "service": {
     "name": "corpapp",
@@ -140,6 +145,7 @@ $ cd consul.d
     }
   }
 }
+EOF
 ```
 
 `corpapp`は説明の通り`japanapp`から文字列を取得するためUpsetreamの設定を行なっています。
@@ -147,6 +153,7 @@ $ cd consul.d
 `sidecar-japanapp.json`
 
 ```json
+cat << EOF > sidecar-japanapp.json
 {
   "service": {
     "name": "japanapp",
@@ -168,6 +175,7 @@ $ cd consul.d
     }
   }
 }
+EOF
 ```
 
 `japanapp`もUpstream先はありません。サイドカーの設定は以上です。
@@ -175,6 +183,7 @@ $ cd consul.d
 `sidecar-unintentionalapp.json`
 
 ```json
+cat << EOF > sidecar-unintentionalapp.json
 {
   "service": {
     "name": "unintentionalapp",
@@ -206,6 +215,7 @@ $ cd consul.d
     }
   }
 }
+EOF
 ```
 
 これは実態は`hashicorjapanapp`と同じですが、別のサービスとして扱います。最後に利用するので今は気にしないでください。
