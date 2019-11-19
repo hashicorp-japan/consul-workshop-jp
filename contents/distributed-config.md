@@ -41,6 +41,27 @@ $ export DATA_DIR=$(pwd)/config-demo-data
 $ export CONFIG_DIR=$(pwd)/consul-config-config
 $ git clone https://github.com/tkaburagi/consul-config-spring
 $ cd consul-config-spring
+$ cat << EOF > ${CONFIG_DIR}/consul-config.hcl
+datacenter = "dc1"
+
+server = true
+
+bootstrap_expect = 1
+ui               = true
+
+bind_addr   = "0.0.0.0"
+client_addr = "0.0.0.0"
+
+ports {
+  grpc = 8502
+}
+
+connect {
+  enabled = true
+}
+
+enable_central_service_config = true
+EOF
 ```
 
 アプリケーションをビルドしてDockerコンテナとして起動します。Consulサーバがすでに起動している場合は　`Ctrl+C`で停止してください。
