@@ -9,7 +9,9 @@
 	* [Consul Template](contents/scf.md)
 1. Service Mesh
 	* [Intensions](contents/intentions.md)
-	* [L7 Traffic Management](contents/l7.md)
+	* [L7 Traffic Management: Routing](contents/l7-routing.md)
+	* [L7 Traffic Management: Splitting](contents/l7-splitting.md)
+	* [Observability](contents/observability.md)
 	* Mesh Gateway
 	* Certification Management
 1. Kubernetes連携
