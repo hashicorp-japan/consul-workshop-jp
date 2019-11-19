@@ -25,9 +25,20 @@ useful
 
 ## Distributed Configurations
 
+Workshop用のディレクトリがない場合は任意のディレクトリを作りましょう。
+
+```shell
+$ mkdir consul-workshop
+$ cd consul-workshop
+```
+
 ここでは簡単なWebアプリを使ってConsulからWebアプリに設定を注入してみます。ConsulのKVSに設定を格納し、それを各アプリケーションが取得します。まずはアプリのレポジトリをクローンして、セットアップをします。
 
 ```shell
+$ mkdir config-demo-data
+$ mkdir consul_config
+$ export DATA_DIR=$(pwd)/config-demo-data
+$ export CONFIG_DIR=$(pwd)/consul-config-config
 $ git clone https://github.com/tkaburagi/consul-config-spring
 $ cd consul-config-spring
 ```
@@ -40,114 +51,66 @@ $ ./run.sh
 
 `http://127.0.0.1:8500`にブラウザでアクセスし、起動していることを確認してください。
 
-`web-front`と`web-backend`の二つのアプリが起動し、それぞれローカルから`8080`, `9090`のポートでアクセスできるはずです。
+7つのアプリケーションインスタンスが起動しているはずです。
+
+それぞれがコンテナで起動し、1010 - 7070のポートでローカルホストからアクセスできるはずです。
 
 ```console
-$ curl localhost:9090
-Hello HashiCorp!!!!
+$ curl 127.0.0.1:1010
+hi from APP_1 at 172.23.0.4
 ```
 
-```console
-$ curl localhost:8080/greetings
-MMMMMMMMMMMBTMMMM#TMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMM!  .MMMM#   ?WMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMM      .MMMM#    .MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MM9^       ..MMMMM#    .MM@  7HMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMHMHMMMMMMMMMMMMWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-M       .+MMMMMMMM#    .MM@    (MMMMMM   JMMMMM#   dMMMMMMMMMMMMMMMMMMMMMMMM   JMMMMMMMMM}  (MMMMM        MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-M    .MMMM#M .MMMM#    .MM@    (MMMMMM   JMMMMM#   dMMMMMMMMMMMMMMMMMMMMMMMM   JMMMMMMMMMMMM(MM!         (MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-M    .MMM    .MMMM#    -MM@    (MMMMMM   JMMMMM#   dMMMMMMMMMWMMMM#MMMMMMTMM   J#MM77TMMMYMM4M#   MMMMMMMMMMMMM777MWMMMMMMTM#MM#MMWHMM77TMMM
-M    .MMM    .MMMM=    .MM@    (MMMMMM   ?MMMMM@   dMN         MMF   .....MM          .MM}  (M@   MMMMMMMMM$   ...   4M#      d#     ..   WM
-M    .MMM              .MM@    (MMMMMM             dMMMMMMMM   dM)  (MMMMMMM   .NMMb   MM}  (M@   MMMMMMMM#   MMMMb  .M#   .JMM#   MMMM]  .M
-M    .MMM    .....,    -MM@    (MMMMMM   (NNNNNm   dMM#        dMb.    _7WMM   JMMM@   MM}  (M@   MMMMMMMM#   MMMM@   M#   MMMM#   MMMM]  .M
-M    .MMM    .MMMM#    .MM@    (MMMMMM   JMMMMM#   dMF  ....   dMMMNNg,   MM   JMMM@   MM}  (M@   MMMMMMMM#   MMMMF   M#   MMMM#   MMMM]  .M
-M    .MMM    .MMMM# ..MMMMF    (MMMMMM   JMMMMM#   dM)  JMM#   dM#WMMM#   MM   JMMM@   MM}  (MN.         4N   ?MM#^  .M#   MMMM#   WMM#'  .M
-M    .MMM    .MMMMNMMMMMM      (MMMMMM   JMMMMM#   dMN         dM{       .MM   JMMM@   MM}  (MMN,        ,MN,       .MM#   MMMM#         .MM
-MNa. .MMM    .MMMMM#M        .gMMMMMMMMMMMMMMMMMMMMMMMMMNMMMMMMMMMMMMNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNMMMMMMMMMNNMMMMMMMMMMMMMM#   MMNNMMMMM
-MMMMMNMMM    .MMMM#      ..MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM#   MMMMMMMMM
-MMMMMMMMMJ,  .MMMM#   .JMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM# ..MMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+ここでは`hi`の文字列は`applications.properties`でセットされているコンフィグから読み取っています。
 
-Message from Backend = Hello HashiCorp!!!!
-Current java version = 12.0.2+10
-App index = 1
-Backend host = localhost%
+例えば、全アプリケーションのこの設定を変更し、出力するメッセージを変更する際、通常は設定を変更し、アプリケーションをビルドし直して、再デプロイするといった運用が必要です。
+
+これは単なるメッセージの文字列の設定だけでなく、環境ごとに変わるようなDBの設定、セキュリティやログレベルといった全ての設定で同じことが言えます。
+
+Consulでそのような複数のアプリに対する設定変更をどのように実現できるかをこのあと試してみます。
+
+**別ターミナルを立ち上げて**アプリからのレスポンス内容を監視しておきます。
+
+```console
+$ ./watch.sh
+hi from APP_1 at 172.23.0.4
+hi from APP_2 at 172.23.0.6
+hi from APP_3 at 172.23.0.3
+hi from APP_4 at 172.23.0.8
+hi from APP_5 at 172.23.0.7
+hi from APP_6 at 172.23.0.2
+hi from APP_7 at 172.23.0.5
 ```
 
-## Spring Bootの設定を変更する
+## Consulにコンフィグレーションを書き込む
 
-アプリが起動出来たら設定を変更してみます。Spring Bootには`Actuator`という機能があり、アプリケーションのメトリクスをHTTPのエンドポイントでExposeしてくれます。デフォルトでは限られたメトリクスのみ取得することが出来、特定のメトリクスは非公開になっています。これを有効化するには各アプリケーションの設定を書き換えてビルドし直してデプロイする必要があります。
+このアプリでは下記の`bootstrap.yml`の設定により、`config`というprefixのディレクトリの中に保存されている`data`という設定をアプリのコンフィグレーションとして扱うように設定しています。
 
-Consulで設定を管理し、それを配布するとどのような振る舞いになるかを確認してみましょう。`Actuator`とログレベルの設定を変更します。
+これはSpring Cloud Consulの機能を利用して抽象的な設定が可能ですが、他のアプリでも同じように実装できるはずです。
 
-まずはエンドポイントの確認をします。
-
-```console
-$ curl localhost:8080/actuator | jq
-
-{
-  "_links": {
-    "self": {
-      "href": "http://localhost:8080/actuator",
-      "templated": false
-    },
-    "health": {
-      "href": "http://localhost:8080/actuator/health",
-      "templated": false
-    },
-    "health-component": {
-      "href": "http://localhost:8080/actuator/health/{component}",
-      "templated": true
-    },
-    "health-component-instance": {
-      "href": "http://localhost:8080/actuator/health/{component}/{instance}",
-      "templated": true
-    },
-    "info": {
-      "href": "http://localhost:8080/actuator/info",
-      "templated": false
-    }
-  }
-}
-
-$ curl localhost:9090/actuator | jq
-
-{
-  "_links": {
-    "self": {
-      "href": "http://localhost:9090/actuator",
-      "templated": false
-    },
-    "health-component": {
-      "href": "http://localhost:9090/actuator/health/{component}",
-      "templated": true
-    },
-    "health": {
-      "href": "http://localhost:9090/actuator/health",
-      "templated": false
-    },
-    "health-component-instance": {
-      "href": "http://localhost:9090/actuator/health/{component}/{instance}",
-      "templated": true
-    },
-    "info": {
-      "href": "http://localhost:9090/actuator/info",
-      "templated": false
-    }
-  }
-}
+```yaml
+spring:
+  cloud:
+    consul:
+      host: host.docker.internal
+      port: 8500
+      config:
+        format: YAML
+        enabled: true
+        prefix: config
+        data: data
 ```
 
-上記がデフォルトで有効化されているエンドポイントです。興味のある方はいくつかアクセスしてみて出力結果を確認してみてください。
+ConsulのKVSを利用して、設定内容を書き込みます。
 
-また、Docker Composeの`web_1`, `api_1`のログを見てデバッグログは出力されていないことを確認しておいてください。
-
-Consul KVに設定を格納します。
-
-
-```console
+```shell
 $ consul kv put config/application/data @app_config.yml
-$ consul kv get config/application/data
+```
 
+`app_config.yml`にはメトリクスやログレベルの設定の他に、`app.message`という、先ほどの`hi`とセットされている内容を`HEY HEY HEY`にオーバーライドしています。
+
+```console
+$ consul kv get config/application/data
+#config/application/data
 management:
   endpoints:
     web:
@@ -156,491 +119,55 @@ management:
 logging:
   level:
     org.springframework.web: DEBUG
+
+app:
+  message: "HEY HEY HEY"
 ```
 
-`app_config.yml`の中身はこちらです。
-
-```console
-$ cat app_config.yml
-management:
-  endpoints:
-    web:
-      exposure:
-        include: “*”
-logging:
-  level:
-    org.springframework.web: DEBUG
-```
-
-全てのActuatorのエンドポイントを有効化し、Webのログをデバッグモードにしています。Docker Composeの出力を`Ctrl+C`で停止し再起動します。
+あとはアプリを再起動するだけです。
 
 ```shell
-$ docker-compose down
-$ docker-compose up
+./updateconfig.sh
 ```
 
-Acuatorのエンドポイントを再度確認してみましょう。
+これでアプリが順番で再起動します。`watch.sh`の出力結果を見ながら、アプリの設定が全部のインスタンスに反映されていることを確認しましょう。
 
-```shell
-$ curl 127.0.0.1:8080/actuator | jq
+```
+HEY HEY HEY from APP_1 at 172.23.0.4
+HEY HEY HEY from APP_2 at 172.23.0.6
+HEY HEY HEY from APP_3 at 172.23.0.3
+HEY HEY HEY from APP_4 at 172.23.0.8
+HEY HEY HEY from APP_5 at 172.23.0.7
+HEY HEY HEY from APP_6 at 172.23.0.2
+HEY HEY HEY from APP_7 at 172.23.0.1
 ```
 
-<details><summary>出力例</summary>
+このようにアプリに一切変更を加えることなく設定をConsulから取得し反映させることができます。
 
-```json
-{
-  "_links": {
-    "self": {
-      "href": "http://127.0.0.1:8080/actuator",
-      "templated": false
-    },
-    "archaius": {
-      "href": "http://127.0.0.1:8080/actuator/archaius",
-      "templated": false
-    },
-    "auditevents": {
-      "href": "http://127.0.0.1:8080/actuator/auditevents",
-      "templated": false
-    },
-    "beans": {
-      "href": "http://127.0.0.1:8080/actuator/beans",
-      "templated": false
-    },
-    "caches": {
-      "href": "http://127.0.0.1:8080/actuator/caches",
-      "templated": false
-    },
-    "caches-cache": {
-      "href": "http://127.0.0.1:8080/actuator/caches/{cache}",
-      "templated": true
-    },
-    "health-component-instance": {
-      "href": "http://127.0.0.1:8080/actuator/health/{component}/{instance}",
-      "templated": true
-    },
-    "health": {
-      "href": "http://127.0.0.1:8080/actuator/health",
-      "templated": false
-    },
-    "health-component": {
-      "href": "http://127.0.0.1:8080/actuator/health/{component}",
-      "templated": true
-    },
-    "conditions": {
-      "href": "http://127.0.0.1:8080/actuator/conditions",
-      "templated": false
-    },
-    "configprops": {
-      "href": "http://127.0.0.1:8080/actuator/configprops",
-      "templated": false
-    },
-    "bus-env-destination": {
-      "href": "http://127.0.0.1:8080/actuator/bus-env/{destination}",
-      "templated": true
-    },
-    "bus-env": {
-      "href": "http://127.0.0.1:8080/actuator/bus-env",
-      "templated": false
-    },
-    "bus-refresh": {
-      "href": "http://127.0.0.1:8080/actuator/bus-refresh",
-      "templated": false
-    },
-    "bus-refresh-destination": {
-      "href": "http://127.0.0.1:8080/actuator/bus-refresh/{destination}",
-      "templated": true
-    },
-    "env": {
-      "href": "http://127.0.0.1:8080/actuator/env",
-      "templated": false
-    },
-    "env-toMatch": {
-      "href": "http://127.0.0.1:8080/actuator/env/{toMatch}",
-      "templated": true
-    },
-    "info": {
-      "href": "http://127.0.0.1:8080/actuator/info",
-      "templated": false
-    },
-    "integrationgraph": {
-      "href": "http://127.0.0.1:8080/actuator/integrationgraph",
-      "templated": false
-    },
-    "loggers": {
-      "href": "http://127.0.0.1:8080/actuator/loggers",
-      "templated": false
-    },
-    "loggers-name": {
-      "href": "http://127.0.0.1:8080/actuator/loggers/{name}",
-      "templated": true
-    },
-    "heapdump": {
-      "href": "http://127.0.0.1:8080/actuator/heapdump",
-      "templated": false
-    },
-    "threaddump": {
-      "href": "http://127.0.0.1:8080/actuator/threaddump",
-      "templated": false
-    },
-    "metrics": {
-      "href": "http://127.0.0.1:8080/actuator/metrics",
-      "templated": false
-    },
-    "metrics-requiredMetricName": {
-      "href": "http://127.0.0.1:8080/actuator/metrics/{requiredMetricName}",
-      "templated": true
-    },
-    "scheduledtasks": {
-      "href": "http://127.0.0.1:8080/actuator/scheduledtasks",
-      "templated": false
-    },
-    "httptrace": {
-      "href": "http://127.0.0.1:8080/actuator/httptrace",
-      "templated": false
-    },
-    "mappings": {
-      "href": "http://127.0.0.1:8080/actuator/mappings",
-      "templated": false
-    },
-    "refresh": {
-      "href": "http://127.0.0.1:8080/actuator/refresh",
-      "templated": false
-    },
-    "features": {
-      "href": "http://127.0.0.1:8080/actuator/features",
-      "templated": false
-    },
-    "service-registry": {
-      "href": "http://127.0.0.1:8080/actuator/service-registry",
-      "templated": false
-    },
-    "bindings-name": {
-      "href": "http://127.0.0.1:8080/actuator/bindings/{name}",
-      "templated": true
-    },
-    "bindings": {
-      "href": "http://127.0.0.1:8080/actuator/bindings",
-      "templated": false
-    },
-    "channels": {
-      "href": "http://127.0.0.1:8080/actuator/channels",
-      "templated": false
-    },
-    "consul": {
-      "href": "http://127.0.0.1:8080/actuator/consul",
-      "templated": false
-    }
-  }
+## Watchの利用
+
+次にConsulの`watch`機能を利用し、KVSの更新をトリガーにスクリプトを実行させ、自動でアプリケーションの起動を行います。
+
+`${CONFIG_DIR}/consul-config.hcl`に以下の行を加えてください。
+
+```
+"watches" = {
+  "args" = ["./updateconfig.sh"]
+
+  "handler_type" = "script"
+
+  "key" = "config/application/data"
+
+  "type" = "key"
 }
 ```
-</details>
 
-```shell
-$ curl 127.0.0.1:9090/actuator | jq
-```
+`config/application/data`の更新をキーに、`updateconfig.sh`をinvokeしています。
 
-<details><summary>出力例</summary>
+再度設定を変更します。次はWeb GUIから実行してみましょう。`http://127.0.0.1:8500/ui/dc1/kv/config/application/data/edit`こちらにアクセスし、`HEY HEY HEY`の値を任意の文字列に変更してください。
 
-```json
-{
-  "_links": {
-    "self": {
-      "href": "http://127.0.0.1:9090/actuator",
-      "templated": false
-    },
-    "archaius": {
-      "href": "http://127.0.0.1:9090/actuator/archaius",
-      "templated": false
-    },
-    "auditevents": {
-      "href": "http://127.0.0.1:9090/actuator/auditevents",
-      "templated": false
-    },
-    "beans": {
-      "href": "http://127.0.0.1:9090/actuator/beans",
-      "templated": false
-    },
-    "caches": {
-      "href": "http://127.0.0.1:9090/actuator/caches",
-      "templated": false
-    },
-    "caches-cache": {
-      "href": "http://127.0.0.1:9090/actuator/caches/{cache}",
-      "templated": true
-    },
-    "health": {
-      "href": "http://127.0.0.1:9090/actuator/health",
-      "templated": false
-    },
-    "health-component": {
-      "href": "http://127.0.0.1:9090/actuator/health/{component}",
-      "templated": true
-    },
-    "health-component-instance": {
-      "href": "http://127.0.0.1:9090/actuator/health/{component}/{instance}",
-      "templated": true
-    },
-    "conditions": {
-      "href": "http://127.0.0.1:9090/actuator/conditions",
-      "templated": false
-    },
-    "configprops": {
-      "href": "http://127.0.0.1:9090/actuator/configprops",
-      "templated": false
-    },
-    "bus-env-destination": {
-      "href": "http://127.0.0.1:9090/actuator/bus-env/{destination}",
-      "templated": true
-    },
-    "bus-env": {
-      "href": "http://127.0.0.1:9090/actuator/bus-env",
-      "templated": false
-    },
-    "bus-refresh-destination": {
-      "href": "http://127.0.0.1:9090/actuator/bus-refresh/{destination}",
-      "templated": true
-    },
-    "bus-refresh": {
-      "href": "http://127.0.0.1:9090/actuator/bus-refresh",
-      "templated": false
-    },
-    "env": {
-      "href": "http://127.0.0.1:9090/actuator/env",
-      "templated": false
-    },
-    "env-toMatch": {
-      "href": "http://127.0.0.1:9090/actuator/env/{toMatch}",
-      "templated": true
-    },
-    "info": {
-      "href": "http://127.0.0.1:9090/actuator/info",
-      "templated": false
-    },
-    "integrationgraph": {
-      "href": "http://127.0.0.1:9090/actuator/integrationgraph",
-      "templated": false
-    },
-    "loggers": {
-      "href": "http://127.0.0.1:9090/actuator/loggers",
-      "templated": false
-    },
-    "loggers-name": {
-      "href": "http://127.0.0.1:9090/actuator/loggers/{name}",
-      "templated": true
-    },
-    "heapdump": {
-      "href": "http://127.0.0.1:9090/actuator/heapdump",
-      "templated": false
-    },
-    "threaddump": {
-      "href": "http://127.0.0.1:9090/actuator/threaddump",
-      "templated": false
-    },
-    "metrics": {
-      "href": "http://127.0.0.1:9090/actuator/metrics",
-      "templated": false
-    },
-    "metrics-requiredMetricName": {
-      "href": "http://127.0.0.1:9090/actuator/metrics/{requiredMetricName}",
-      "templated": true
-    },
-    "scheduledtasks": {
-      "href": "http://127.0.0.1:9090/actuator/scheduledtasks",
-      "templated": false
-    },
-    "httptrace": {
-      "href": "http://127.0.0.1:9090/actuator/httptrace",
-      "templated": false
-    },
-    "mappings": {
-      "href": "http://127.0.0.1:9090/actuator/mappings",
-      "templated": false
-    },
-    "refresh": {
-      "href": "http://127.0.0.1:9090/actuator/refresh",
-      "templated": false
-    },
-    "features": {
-      "href": "http://127.0.0.1:9090/actuator/features",
-      "templated": false
-    },
-    "service-registry": {
-      "href": "http://127.0.0.1:9090/actuator/service-registry",
-      "templated": false
-    },
-    "bindings-name": {
-      "href": "http://127.0.0.1:9090/actuator/bindings/{name}",
-      "templated": true
-    },
-    "bindings": {
-      "href": "http://127.0.0.1:9090/actuator/bindings",
-      "templated": false
-    },
-    "channels": {
-      "href": "http://127.0.0.1:9090/actuator/channels",
-      "templated": false
-    },
-    "consul": {
-      "href": "http://127.0.0.1:9090/actuator/consul",
-      "templated": false
-    }
-  }
-}
-```
-</details>
+変更後`Save`をクリックすると、`updateconfig.sh`の処理が開始されるはずです。
 
-両アプリ共に各エンドポイントが有効になっています。一つアクセスして確認してみましょう。
-
-
-```shell
-$ curl http://127.0.0.1:9090/actuator/consul | jq
-```
-
-<details><summary>出力例</summary>
-
-```json
-{
-  "catalogServices": {
-    "consul": [
-      {
-        "id": "29a4d295-f00a-4c55-233e-844482e02912",
-        "node": "1c9fcf3d6879",
-        "address": "10.5.0.2",
-        "datacenter": "dc1",
-        "taggedAddresses": {
-          "lan": "10.5.0.2",
-          "wan": "10.5.0.2"
-        },
-        "nodeMeta": {
-          "consul-network-segment": ""
-        },
-        "serviceId": "consul",
-        "serviceName": "consul",
-        "serviceTags": [],
-        "serviceAddress": "",
-        "serviceMeta": {
-          "raft_version": "3",
-          "serf_protocol_current": "2",
-          "serf_protocol_max": "5",
-          "serf_protocol_min": "1",
-          "version": "1.6.0"
-        },
-        "servicePort": 8300,
-        "serviceEnableTagOverride": false,
-        "createIndex": 267,
-        "modifyIndex": 267
-      }
-    ],
-    "web-backend": [
-      {
-        "id": "29a4d295-f00a-4c55-233e-844482e02912",
-        "node": "1c9fcf3d6879",
-        "address": "10.5.0.2",
-        "datacenter": "dc1",
-        "taggedAddresses": {
-          "lan": "10.5.0.2",
-          "wan": "10.5.0.2"
-        },
-        "nodeMeta": {
-          "consul-network-segment": ""
-        },
-        "serviceId": "web-backend",
-        "serviceName": "web-backend",
-        "serviceTags": [
-          "secure=false"
-        ],
-        "serviceAddress": "20884144b872",
-        "serviceMeta": {},
-        "servicePort": 9090,
-        "serviceEnableTagOverride": false,
-        "createIndex": 268,
-        "modifyIndex": 270
-      }
-    ],
-    "web-front": [
-      {
-        "id": "29a4d295-f00a-4c55-233e-844482e02912",
-        "node": "1c9fcf3d6879",
-        "address": "10.5.0.2",
-        "datacenter": "dc1",
-        "taggedAddresses": {
-          "lan": "10.5.0.2",
-          "wan": "10.5.0.2"
-        },
-        "nodeMeta": {
-          "consul-network-segment": ""
-        },
-        "serviceId": "web-front",
-        "serviceName": "web-front",
-        "serviceTags": [
-          "secure=false"
-        ],
-        "serviceAddress": "b9a130800aa4",
-        "serviceMeta": {},
-        "servicePort": 8080,
-        "serviceEnableTagOverride": false,
-        "createIndex": 269,
-        "modifyIndex": 272
-      }
-    ]
-  },
-  "agentServices": {
-    "web-backend": {
-      "id": "web-backend",
-      "service": "web-backend",
-      "tags": [
-        "secure=false"
-      ],
-      "address": "20884144b872",
-      "meta": {},
-      "port": 9090,
-      "enableTagOverride": false,
-      "createIndex": null,
-      "modifyIndex": null
-    },
-    "web-front": {
-      "id": "web-front",
-      "service": "web-front",
-      "tags": [
-        "secure=false"
-      ],
-      "address": "b9a130800aa4",
-      "meta": {},
-      "port": 8080,
-      "enableTagOverride": false,
-      "createIndex": null,
-      "modifyIndex": null
-    }
-  },
-  "catalogNodes": [
-    {
-      "id": "29a4d295-f00a-4c55-233e-844482e02912",
-      "node": "1c9fcf3d6879",
-      "address": "10.5.0.2",
-      "datacenter": "dc1",
-      "taggedAddresses": {
-        "lan": "10.5.0.2",
-        "wan": "10.5.0.2"
-      },
-      "meta": {
-        "consul-network-segment": ""
-      },
-      "createIndex": 9,
-      "modifyIndex": 268
-    }
-  ]
-}
-```
-</details>
-
-最後にDocker Composeの標準出力を確認して、デバッグログが出ていることも確認しましょう。以下のようなログが出ることがわかるでしょう。
-
-```
-api_1     | 2019-09-15 05:37:43.633 DEBUG 1 --- [nio-9090-exec-4] o.s.web.servlet.DispatcherServlet        : GET "/actuator/health", parameters={}
-consul_1  |     2019/09/15 05:37:43 [DEBUG] http: Request GET /v1/catalog/services (314.7µs) from=10.5.0.4:39164
-api_1     | 2019-09-15 05:37:43.651 DEBUG 1 --- [nio-9090-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/vnd.spring-boot.actuator.v2+json', given [text/plain, text/*, */*] and supported [application/vnd.spring-boot.actuator.v2+json, application/json]
-api_1     | 2019-09-15 05:37:43.659 DEBUG 1 --- [nio-9090-exec-4] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing [UP {}]
-api_1     | 2019-09-15 05:37:43.662 DEBUG 1 --- [nio-9090-exec-4] o.s.web.servlet.DispatcherServlet        : Completed 200 OK
-```
+`watch.sh`の出力ターミナルを見て、変更が自動で反映されていることを確認してみましょう。
 
 Consulを利用することで設定をアプリからは透過的に変更することができることがわかりました。マイクロサービスなどを採用してアプリケーションの数が増えてきたときこの機能により数十、数百のアプリに対して自動で設定を反映させることが可能です。
