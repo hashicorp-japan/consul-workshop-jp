@@ -235,5 +235,8 @@ Greetings From API -> <200,hi i am v1
 上記のように`v1`, `v2`に対してルーティングがなされていることがわかるはずです。今回はヘッダーを例に扱いましたが同様にパスベースやパラメータベースでのL7ルーティングを行うことができます。
 
 ## 参考リンク
-[L7 Traffic Management](https://www.consul.io/docs/connect/l7-traffic-management.html)
-[Config Entries](https://www.consul.io/docs/agent/config_entries.html)
+* [L7 Traffic Management](https://www.consul.io/docs/connect/l7-traffic-management.html)
+* [Config Entries](https://www.consul.io/docs/agent/config_entries.html)
+* [Service Defaults](https://www.consul.io/docs/agent/config-entries/service-defaults.html)
+* [Service Router](https://www.consul.io/docs/agent/config-entries/service-router.html)
+* [Service Resolver](https://www.consul.io/docs/agent/config-entries/service-resolver.html)
