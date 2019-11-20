@@ -4,14 +4,13 @@
 
 1. [初めてのConsul](contents/hello-consul.md)
 1. [Service Discovery](contents/srd.md)
-1. Service Configuration
-	* [Distributed Configration](contents/distributed-config.md)
-	* [Consul Template](contents/scf.md)
 1. Service Mesh
 	* [Intensions](contents/intentions.md)
 	* [L7 Traffic Management: Routing](contents/l7-routing.md)
 	* [L7 Traffic Management: Splitting](contents/l7-splitting.md)
 	* [Observability](contents/observability.md)
+	* [Distributed Configration](contents/distributed-config.md)
+	* [Consul Template](contents/scf.md)
 	* Mesh Gateway
 	* Certification Management
 1. Kubernetes連携
