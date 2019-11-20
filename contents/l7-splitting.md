@@ -180,5 +180,5 @@ Greetings From API -> <200,hi i am v2
 
 以上のように`service-splitting`の機能を使ってアプリケーションのロールアウトを実施してみました。今回はサブセットを利用しましたが、コードベースやリライトなどを実施した後の異なるサービス同士でもSplittingを行うことも可能です。
 
-##　参考リンク
+## 参考リンク
 * [Service Splitting](https://www.consul.io/docs/agent/config-entries/service-splitter.html)
