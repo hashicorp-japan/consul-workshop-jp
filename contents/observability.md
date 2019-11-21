@@ -36,7 +36,7 @@ $ consul reload
 
 `http://127.0.0.1:8500/v1/agent/metrics?format=prometheus`にアクセスすると多くのメトリクスが出力されるでしょう。
 
-<details><summary>出力例/summary>
+<details><summary>出力例</summary>
 
 ```
 # HELP consul_9ad423be44a4_autopilot_failure_tolerance consul_9ad423be44a4_autopilot_failure_tolerance
