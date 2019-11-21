@@ -190,7 +190,7 @@ $ docker-compose up
 この様にPrometheusでメトリクスを集約し、Grafanaなどのダッシュボードのツールで環境の一括監視を簡単に行うことが出来ます。
 
 ## 参考リンク
-* [Telemetry]https://www.consul.io/docs/agent/telemetry.html
+* [Telemetry]https://www.consul.io/docs/agent/telemetry.html)
 * [Telemetry Configuration](https://www.consul.io/docs/agent/options.html#telemetry)
 * [Observablity](https://www.consul.io/docs/connect/observability.html)
 * [Envoy Integration](https://www.consul.io/docs/connect/proxies/envoy.html#bootstrap-configuration)
