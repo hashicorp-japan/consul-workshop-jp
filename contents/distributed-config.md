@@ -36,9 +36,9 @@ $ cd consul-workshop
 
 ```shell
 $ mkdir config-demo-data
-$ mkdir consul_config
+$ mkdir consul-config
 $ export DATA_DIR=$(pwd)/config-demo-data
-$ export CONFIG_DIR=$(pwd)/consul-config-config
+$ export CONFIG_DIR=$(pwd)/consul-config
 $ git clone https://github.com/tkaburagi/consul-config-spring
 $ cd consul-config-spring
 $ cat << EOF > ${CONFIG_DIR}/consul-config.hcl
