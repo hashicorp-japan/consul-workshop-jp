@@ -169,11 +169,11 @@ HEY HEY HEY from APP_7 at 172.23.0.1
 
 次にConsulの`watch`機能を利用し、KVSの更新をトリガーにスクリプトを実行させ、自動でアプリケーションの起動を行います。
 
-`${CONFIG_DIR}/consul-config.hcl`に以下の行を加えてください。
+`${CONFIG_DIR}/consul-config.hcl`に以下の行を加えてください。`path/to/`はご自身の環境に合わせて書き直してください。
 
 ```
 "watches" = {
-  "args" = ["./updateconfig.sh"]
+  "args" = ["path/to/consul-workshop/updateconfig.sh"]
 
   "handler_type" = "script"
 
@@ -184,11 +184,25 @@ HEY HEY HEY from APP_7 at 172.23.0.1
 ```
 
 `config/application/data`の更新をキーに、`updateconfig.sh`をinvokeしています。
+以下のコマンドでConsulの設定を反映させましょう。
 
-再度設定を変更します。次はWeb GUIから実行してみましょう。`http://127.0.0.1:8500/ui/dc1/kv/config/application/data/edit`こちらにアクセスし、`HEY HEY HEY`の値を任意の文字列に変更してください。
+```shell
+$ consul reload
+```
+
+再度アプリの設定を変更します。次はWeb GUIから実行してみましょう。`http://127.0.0.1:8500/ui/dc1/kv/config/application/data/edit`こちらにアクセスし、`HEY HEY HEY`の値を任意の文字列に変更してください。
 
 変更後`Save`をクリックすると、`updateconfig.sh`の処理が開始されるはずです。
 
 `watch.sh`の出力ターミナルを見て、変更が自動で反映されていることを確認してみましょう。
 
+```
+How is Consul? from APP_1 at 172.23.0.4
+How is Consul? from APP_2 at 172.23.0.6
+How is Consul? from APP_3 at 172.23.0.3
+How is Consul? from APP_4 at 172.23.0.8
+How is Consul? from APP_5 at 172.23.0.7
+How is Consul? from APP_6 at 172.23.0.2
+How is Consul? from APP_7 at 172.23.0.9
+```
 Consulを利用することで設定をアプリからは透過的に変更することができることがわかりました。マイクロサービスなどを採用してアプリケーションの数が増えてきたときこの機能により数十、数百のアプリに対して自動で設定を反映させることが可能です。
