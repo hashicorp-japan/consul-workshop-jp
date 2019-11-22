@@ -88,7 +88,7 @@ EOF
 `sidecar-hashiapp.json`
 
 ```json
-cat << EOF > idecar-hashiapp.json
+cat << EOF > sidecar-hashiapp.json
 {
   "service": {
     "name": "hashiapp",
