@@ -48,7 +48,7 @@ $ cd consul.d
 `sidecar-hashicorpjapanapp.json`
 
 ```json
-cat << EOF > sidecar-hashicorpjapanapp.json`
+cat << EOF > sidecar-hashicorpjapanapp.json
 {
   "service": {
     "name": "hashicorpjapanapp",
