@@ -16,8 +16,4 @@
 	* Certification Management
 1. Kubernetes連携
 1. [運用系機能色々](contents/utilities.md)
-1. Enterprise版機能の紹介
-1. Consul clusterの構築
-	* [AWS (クラウド上へ構築）](assets/cluster_setup/aws/README.md)
-	* GCP
-	* [Vagrant（ローカル環境へ構築）](assets/cluster_setup/vagrant/README.md)
+1. [Enterprise版機能の紹介](https://docs.google.com/presentation/d/1EdCRjc9nCBf9txf4xk__8BOUFYr5WhObsjz4IliAMgg/edit?usp=sharing)
