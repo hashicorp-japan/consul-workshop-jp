@@ -1,6 +1,6 @@
 # Consul CLIを色々と試す
 
-consul cliでは様々な機能を提供しています。ここではその利用を通してConsulの様々な機能を試してみたいと思います。
+ここではconsul cliの基本的な使い方のガイドを通してConsulの様々な機能を試してみたいと思います。
 
 まずはクラスタ構成がConsulを立ち上げてみます。
 
@@ -119,12 +119,10 @@ b51ccbf4f1a3  172.27.0.6:8301  alive   client  1.6.0  2         dc1  <default>
 b6075d14f88b  172.27.0.5:8301  alive   client  1.6.0  2         dc1  <default>
 ```
 
-ここではServerノードとエージェントが入っているクライアントも含まれています。Statusは`alive`, `left`, `failed`のいずれかがあります。一つコンテナを停止してみましょう。
-
-`docker ps`で出力されるContainer IDをメモしてください。
+ここではServerノードとエージェントが入っているクライアントも含まれています。Statusは`alive`, `left`, `failed`のいずれかがあります。一つコンテナを停止してみましょう。`Node`がコンテナのIDになっています。いずれかをメモしましょう。
 
 ```shell
-$ docker stop <CONTAINER ID>
+$ docker stop 82963a2d4324
 ```
 
 ```console
@@ -138,7 +136,10 @@ b51ccbf4f1a3  172.27.0.6:8301  alive   client  1.6.0  2         dc1  <default>
 b6075d14f88b  172.27.0.5:8301  alive   client  1.6.0  2         dc1  <default>
 ```
 
-`failed`に変化したことがわかるでしょう。しばらくするとAutopilot機能により自動的に`left`となりクラスタから切り離されます。`-detailed`オプションをつけることで詳細な情報を見ることが出来ます。一旦`Ctr+C`で全コンテナを停止して再起動しましょう。
+`failed`に変化したことがわかるでしょう。しばらくするとAutopilot機能により自動的に`left`となりクラスタから切り離されます。Autopilot機能はこのあともう少し見ていきます。
+
+
+`-detailed`オプションをつけることで詳細な情報を見ることが出来ます。一旦`Ctr+C`で全コンテナを停止して再起動しましょう。
 
 ```shell
 $ docker-compose down
