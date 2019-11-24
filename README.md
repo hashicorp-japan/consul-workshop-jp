@@ -3,6 +3,7 @@
 ## Agenda
 
 1. [初めてのConsul](contents/hello-consul.md)
+1. [consul cli](contents/cli.md)
 1. [Service Discovery](contents/srd.md)
 1. Service Mesh
 	* [Sidecar Proxyの導入](contents/sidecar.md)
