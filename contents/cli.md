@@ -15,7 +15,7 @@ $ docker-compose up
 Consulではコマンド入力をサポートするための入力補足を用意しています。以下のコマンドでインストールしてみましょう。
 
 ```shell
-$ consul -install-autocomplete
+$ consul -autocomplete-install
 ```
 
 これを利用するとタブでサブコマンドの入力を補完してくれます。
