@@ -5,7 +5,7 @@
 まずはクラスタ構成がConsulを立ち上げてみます。
 
 ```shell
-$ wget https://raw.githubusercontent.com/hashicorp/consul/master/demo/docker-compose-cluster/docker-compose.yml
+$ curl https://raw.githubusercontent.com/hashicorp/consul/master/demo/docker-compose-cluster/docker-compose.yml > docker-compose.yml
 
 $ docker-compose up 
 ```
