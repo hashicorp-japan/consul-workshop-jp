@@ -1,5 +1,9 @@
 # Hashicorp Consul Workshop
 
+[Consul](https://www.consul.io/)はHashiCorpが中心に開発をするOSSのServcie DiscoveryやService Meshを実現するためのツールですService Discoveryやヘルスチェックなどの基本的な機能に加えてmTLS, L7 Traffic Managementやコンフィグレーション管理など様々な機能を提供しています。Consulはマルチプラットフォームでかつ全ての機能をHTTP APIで提供しているため、環境やクライアントを問わず利用することができます。
+
+本ワークショップはOSSの機能を中心に様々なユースケースに合わせたハンズオンを用意しています。
+
 ## Pre-requisite
 
 * 環境
