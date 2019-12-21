@@ -1,5 +1,20 @@
 # Hashicorp Consul Workshop
 
+## Pre-requisite
+
+* 環境
+	* macOS or Linux
+
+* ソフトウェア
+	* Consul
+	* Docker / Docker Compose
+	* Java 12(いつか直します...)
+	* jq, watch, wget, curl
+
+## 資料
+
+* [Consul Overview](https://docs.google.com/presentation/d/126Y5PgELCuYcR-j4IRQcj7sxczMKT0PgFWS8x9StHXE/edit?usp=sharing)
+
 ## Agenda
 
 1. [初めてのConsul](contents/hello-consul.md)
