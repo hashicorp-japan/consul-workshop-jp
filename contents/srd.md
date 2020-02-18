@@ -12,7 +12,7 @@ Consulの機能は多岐に渡りますが、Service Discoveryはコアの機能
 $ git clone https://github.com/tkaburagi/nginx
 $ cd nginx
 
-$ docker-compose up
+$ docker-compose up -d
 ```
 
 起動を確認しておきましょう。
