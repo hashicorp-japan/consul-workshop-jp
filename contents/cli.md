@@ -361,5 +361,11 @@ dummy
 
 興味がある方は[Enterprise版機能の紹介](https://docs.google.com/presentation/d/1EdCRjc9nCBf9txf4xk__8BOUFYr5WhObsjz4IliAMgg/edit?usp=sharing)を見てください。
 
+最後に`Ctr+C`で抜けて全コンテナを停止しておきましょう。
+
+```shell
+$ docker-compose down
+```
+
 ## 参考リンク
 * [Consul CLI](https://www.consul.io/docs/commands/index.html)

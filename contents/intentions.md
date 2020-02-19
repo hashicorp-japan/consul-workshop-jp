@@ -25,6 +25,7 @@ ConsulではService Discovery以外にもService Meshを実現するための様
 GitHubからレポジトリをクローンします。
 
 ```shell
+$ pkill consul
 $ cd consul-workshop
 $ git clone https://github.com/tkaburagi/consul-intentions-demo
 ```
@@ -39,8 +40,7 @@ $ git clone https://github.com/tkaburagi/consul-intentions-demo
 
 ```shell
 $ cd consul-intentions-demo
-$ mkdir consul.d
-$ cd consul.d
+$ mkdir consul.d consul_data
 ```
 
 この中に4つのファイルを作っていきます。それぞれがサイドカーの設定となります。
@@ -48,7 +48,7 @@ $ cd consul.d
 `sidecar-hashicorpjapanapp.json`
 
 ```json
-cat << EOF > sidecar-hashicorpjapanapp.json
+cat << EOF > consul.d/sidecar-hashicorpjapanapp.json
 {
   "service": {
     "name": "hashicorpjapanapp",
@@ -88,7 +88,7 @@ EOF
 `sidecar-hashiapp.json`
 
 ```json
-cat << EOF > sidecar-hashiapp.json
+cat << EOF > consul.d/sidecar-hashiapp.json
 {
   "service": {
     "name": "hashiapp",
@@ -118,7 +118,7 @@ EOF
 `sidecar-corpapp.json`
 
 ```json
-cat << EOF > sidecar-corpapp.json
+cat << EOF > consul.d/sidecar-corpapp.json
 {
   "service": {
     "name": "corpapp",
@@ -153,7 +153,7 @@ EOF
 `sidecar-japanapp.json`
 
 ```json
-cat << EOF > sidecar-japanapp.json
+cat << EOF > consul.d/sidecar-japanapp.json
 {
   "service": {
     "name": "japanapp",
@@ -183,7 +183,7 @@ EOF
 `sidecar-unintentionalapp.json`
 
 ```json
-cat << EOF > sidecar-unintentionalapp.json
+cat << EOF > consul.d/sidecar-unintentionalapp.json
 {
   "service": {
     "name": "unintentionalapp",
@@ -336,6 +336,12 @@ $ curl http://127.0.0.1:9090
 エラーとなり許可しないサービス以外からはアクセスできないことがわかります。
 
 このようにIntentionsを利用するとサービスベースでACLを設定でき、物理的なロケーションのresolveはConsulに任せることができます。
+
+最後に`Ctr+C`で抜けて全コンテナを停止しておきましょう。
+
+```shell
+$ docker-compose down
+```
 
 ## 参考リンク
 * [Intentions](https://www.consul.io/docs/connect/intentions.html)

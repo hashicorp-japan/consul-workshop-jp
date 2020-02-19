@@ -7,7 +7,9 @@ Consulではサイドカーを導入してアプリケーションからは透�
 Consulを起動してサービスを起動しておきましょう。
 
 ```shell
+$ pkill consul
 $ cd consul-workshop
+$ DIR=$(pwd)
 $ mkdir consul-config-sidecar
 $ cat << EOF > consul-config-sidecar/consul-config.hcl
 datacenter = "dc1"
@@ -27,11 +29,11 @@ EOF
 ```
 
 ```shell
-$ consul agent -server -bind=0.0.0.0 \
+$ consul agent -server -bind=127.0.0.1 \
 -client=0.0.0.0 \
--data-dir=./sidecar-car-data \
+-data-dir=${DIR}/sidecar-car-data \
 -bootstrap-expect=1 -ui \
--config-dir=./consul-config-sidecar
+-config-dir=${DIR}/consul-config-sidecar
 ```
 
 ## Built-in Proxyを利用する

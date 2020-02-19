@@ -187,15 +187,19 @@ web.service.consul.	0	IN	TXT	"consul-network-segment="
 ```shell
 $ mkdir -p consul-workshop/consul.d
 $ cd consul-workshop
+$ DIR=$(pwd)
 $ consul agent -server -bind=127.0.0.1 \
 -client=127.0.0.1 \
--data-dir=/path/to/consul-workshop/localdata \
+-data-dir=${DIR}/localdata \
 -bootstrap-expect=1 -ui \
 -dns-port=8600 \
--config-dir=/path/to/consul-workshop/consul.d
+-config-dir=${DIR}/consul.d
 ```
 
 同様にConsulが起動するでしょう。最後にWebブラウザにアクセスしてみます。`http://127.0.0.1:8500`にアクセスしてみましょう。
+
+> サーバ上で実行しローカルからブラウザにアクセスできない方はポートフォワーディングの設定をしてみて下さい。
+> macOSの場合はローカルマシンで`ssh -L 8500:127.0.0.1:8500 ubuntu@<SERVERS_PUBLIC_IP> -N`です。
 
 `Services`のタブにConsulと表示され、`Nodes`のタブにご自身のラップトップが登録されていることがわかるでしょう。
 

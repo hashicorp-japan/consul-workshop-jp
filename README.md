@@ -22,14 +22,14 @@
 ## Agenda
 
 1. [初めてのConsul](contents/hello-consul.md)
-1. [consul cli](contents/cli.md)
 1. [Service Discovery](contents/srd.md)
+1. [consul cli](contents/cli.md)
 1. Service Mesh
 	* [Sidecar Proxyの導入](contents/sidecar.md)
 	* [Intensions](contents/intentions.md)
 	* [L7 Traffic Management: Routing](contents/l7-routing.md)
 	* [L7 Traffic Management: Splitting](contents/l7-splitting.md)
-	* [Distributed Configration](contents/distributed-config.md)
+	* [Distributed Configration](contents/centerized-config.md)
 	* [Consul Template](contents/scf.md)
 	* [Observability](contents/observability.md)
 	* Mesh Gateway

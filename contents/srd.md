@@ -9,6 +9,7 @@ Consulの機能は多岐に渡りますが、Service Discoveryはコアの機能
 まずDockerで二つのインタンスを起動させます。
 
 ```shell
+$ cd consul-workshop
 $ git clone https://github.com/tkaburagi/nginx
 $ cd nginx
 
@@ -345,6 +346,13 @@ Takayukis-MBP.node.dc1.consul. 0 IN	TXT	"consul-network-segment="
 正しい状態に戻りました。ConsulのService Registryの機能を使うことでプラットフォームに依存せずサービス名ベースでの相互接続やサービス間のヘルスチェックが可能です。実際のアプリケーションからはConsulを経由して、APIやデータストアなどのシステムコンポーネントにアクセスすることが出来ます。
 
 また、Service RegistryだけでなくService Meshを実現するための様々な機能を備えています。
+
+
+最後に`Ctr+C`で抜けて全コンテナを停止しておきましょう。
+
+```shell
+$ docker-compose down
+```
 
 ## 参考リンク
 * [DNS Interface](https://www.consul.io/docs/agent/dns.html)
