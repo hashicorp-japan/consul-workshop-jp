@@ -12,6 +12,11 @@ ConsulではConsulサーバやその配下にあるサービスやノードな�
 
 終了している方は以下の手順を進めてください。また終了している方も手順に沿って起動を行なってください。
 
+```console
+$ pwd
+/path/to/consul-workshop/consul-intentions-demo
+```
+
 ## Telemetryの設定を行う
 
 まずは各サーバにインストールされているConsul Agentを使ってメトリクスを取得するパターンを試してみます。Consulでは `statsite`, `statsd`にログを転送したり、`Prometheus`のフォーマットでログを出力させ、スクレイピングさせたり出来ます。
@@ -22,16 +27,17 @@ ConsulではConsulサーバやその配下にあるサービスやノードな�
 
 ```hcl
 telemetry = {
-  "prometheus_retention_time" = "3h",
+  "prometheus_retention_time" = "3h"
 }
 ```
 
 この設定を加えることでPrometheusのフォーマットでメトリクスがexposeされます。また、ここではメトリクスの保持時間として3時間を指定しています。
 
-設定はこれだけです。設定を反映させるために`consul reload`コマンドを実行してください。
+設定はこれだけです。設定を反映させるためにConsulを再起動します。
 
 ```shell
-$ consul reload
+$ docker-compose down
+$ docker-compose up -d
 ```
 
 `http://127.0.0.1:8500/v1/agent/metrics?format=prometheus`にアクセスすると多くのメトリクスが出力されるでしょう。
@@ -92,12 +98,19 @@ config_entries {
 
 各サービスに関わるサイドカーの設定を`proxy-defaults`としてセットしています。各サービスのEnvoyで出力されるメトリクスを`9102`でスクレイプ出来る様にしてあります。
 
+設定を反映させるためにConsulを再起動します。
+
+```shell
+$ docker-compose down
+$ docker-compose up -d
+```
+
 この設定を行うと全てのサイドカーに反映されますが、一つのアプリからどの様なメトリクスが出力されるかを見てみましょう。
 
 `docker-compose.yml`の`hashicorpjapanapp`の設定に`9102:9102`でポートフォワードする様に設定されています。
 
-```consul
-$ http://127.0.0.1:9102/metrics
+```console
+$ curl http://127.0.0.1:9102/metrics
 
 # TYPE envoy_ext_authz_connect_authz_failure_mode_allowed counter
 envoy_ext_authz_connect_authz_failure_mode_allowed{local_cluster="hashicorpjapanapp"} 0
@@ -124,7 +137,6 @@ envoy_ext_authz_connect_authz_cx_closed{local_cluster="hashicorpjapanapp"} 0
 Prometheusの設定ファイルを作ります。Prometheusでは`consul_sd_config`というConsulのService Dicoveryを利用して、Consul配下にあるサービス群を動的に監視出来るような連携機能が用意されています。
 
 ```shell
-$ cd path/to/consul-workshop
 $ cat << EOF > prometheus-envoy-intensions-demo.yml
 # my global config
 global:
@@ -157,7 +169,7 @@ scrape_configs:
         separator:     ':'
         regex:         '(.*):(.*)'
         target_label:  '__address__'
-        replacement:   '${1}:8500'
+        replacement:   '\${1}:8500'
   - job_name: 'envoy-metrics'
     scrape_interval: 10s
     scrape_timeout: 5s  
@@ -173,14 +185,154 @@ scrape_configs:
         separator:     ':'
         regex:         '(.*):(.*)'
         target_label:  '__address__'
-        replacement:   '${1}:9102'
+        replacement:   '\${1}:9102'
+EOF
 ```
 
-一旦Dockerを`Ctr+C`で停止をし、再起動しましょう。
+次にDocker ComposeにPrometheusを追加します。
+
+```shell
+cat << EOF > docker-compose.yml
+version: "3.3"
+services:
+
+  consul:
+    image: consul:1.6.0
+    command: ["consul","agent","-config-file=/config/consul-config.hcl","-config-dir=/config"]
+    volumes:
+      - "./consul_config:/config"
+      - "./consul_data:/data"
+    ports:
+      - 8500:8500
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.2
+
+  hashicorpjapanapp:
+    build:
+      context: ./hashicorpjapanapp
+      dockerfile: Dockerfile
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.3
+    ports:
+      - 8080:8080
+      - 9102:9102
+  hashicorpjapanapp_envoy:
+    image: nicholasjackson/consul-envoy:v1.6.0-v0.10.0
+    environment:
+      CONSUL_HTTP_ADDR: 10.5.0.2:8500
+      CONSUL_GRPC_ADDR: 10.5.0.2:8502
+      SERVICE_CONFIG: /config/sidecar-hashicorpjapanapp.json
+    volumes:
+      - "./consul.d:/config"
+    command: ["consul", "connect", "envoy","-sidecar-for", "hashicorpjapanapp"]
+    network_mode: "service:hashicorpjapanapp"
+ 
+  hashiapp:
+    build:
+      context: ./hashiapp
+      dockerfile: Dockerfile
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.4
+    ports:
+      - 1010:8080
+  hashiapp_envoy:
+    image: nicholasjackson/consul-envoy:v1.6.0-v0.10.0
+    environment:
+      CONSUL_HTTP_ADDR: 10.5.0.2:8500
+      CONSUL_GRPC_ADDR: 10.5.0.2:8502
+      SERVICE_CONFIG: /config/sidecar-hashiapp.json
+    volumes:
+      - "./consul.d:/config"
+    command: ["consul", "connect", "envoy","-sidecar-for", "hashiapp"]
+    network_mode: "service:hashiapp"
+  
+  corpapp:
+    build:
+      context: ./corpapp
+      dockerfile: Dockerfile
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.5
+    ports:
+      - 2020:8080
+  corpapp_envoy:
+    image: nicholasjackson/consul-envoy:v1.6.0-v0.10.0
+    environment:
+      CONSUL_HTTP_ADDR: 10.5.0.2:8500
+      CONSUL_GRPC_ADDR: 10.5.0.2:8502
+      SERVICE_CONFIG: /config/sidecar-corpapp.json
+    volumes:
+      - "./consul.d:/config"
+    command: ["consul", "connect", "envoy","-sidecar-for", "corpapp"]
+    network_mode: "service:corpapp"
+
+  japanapp:
+    build:
+      context: ./japanapp
+      dockerfile: Dockerfile
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.6
+    ports:
+      - 3030:8080
+  japanapp_envoy:
+    image: nicholasjackson/consul-envoy:v1.6.0-v0.10.0
+    environment:
+      CONSUL_HTTP_ADDR: 10.5.0.2:8500
+      CONSUL_GRPC_ADDR: 10.5.0.2:8502
+      SERVICE_CONFIG: /config/sidecar-japanapp.json
+    volumes:
+      - "./consul.d:/config"
+    command: ["consul", "connect", "envoy","-sidecar-for", "japanapp"]
+    network_mode: "service:japanapp"
+
+  unintentionalapp:
+    build:
+      context: ./hashicorpjapanapp
+      dockerfile: Dockerfile
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.7
+    ports:
+      - 9090:8080
+  unintentionalapp_envoy:
+    image: nicholasjackson/consul-envoy:v1.6.0-v0.10.0
+    environment:
+      CONSUL_HTTP_ADDR: 10.5.0.2:8500
+      CONSUL_GRPC_ADDR: 10.5.0.2:8502
+      SERVICE_CONFIG: /config/sidecar-unintentionalapp.json
+    volumes:
+      - "./consul.d:/config"
+    command: ["consul", "connect", "envoy","-sidecar-for", "unintentionalapp"]
+    network_mode: "service:unintentionalapp"
+    
+  prometheus-server:
+    image: prom/prometheus
+    ports:
+      - 9999:9090
+    volumes:
+      - ./prometheus-envoy-intensions-demo.yml:/etc/prometheus/prometheus.yml
+    networks:
+      vpcbr:
+        ipv4_address: 10.5.0.9
+  
+networks:
+  vpcbr:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+EOF
+```
+
+一旦Dockerを再起動しましょう。
 
 ```shell
 $ docker-compose down
-$ docker-compose up
+$ docker-compose up -d
 ```
 
 起動後、`http://localhost:9999/graph`にアクセスをするとPrometheusの画面が見れるでしょう。

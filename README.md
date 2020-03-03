@@ -30,7 +30,7 @@
 	* [L7 Traffic Management: Routing](contents/l7-routing.md)
 	* [L7 Traffic Management: Splitting](contents/l7-splitting.md)
 	* [Distributed Configration](contents/centerized-config.md)
-	* [Consul Template](contents/scf.md)
+	* [Consul Template](contents/consul-template.md)
 	* [Observability](contents/observability.md)
 	* Mesh Gateway
 	* Certification Management

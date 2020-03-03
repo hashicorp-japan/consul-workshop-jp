@@ -24,6 +24,8 @@ useful
 
 `consulis`というキーに`useful`という値を入れて取り出しました。とても簡単です。Consul内のデータはConsulクラスタ内のノード同士でレプリケーションし、ユーザは意識することなくデータの冗長性を保つことができます。
 
+余裕のある方はWebブラウザの`Key/Value`のタブからも確認ができるのでそこから値を確認したり編集して、再度`consul kv get`をしてみて下さい。
+
 `Ctrl+C`でConsulを停止してください。
 
 ## Centerized Configurations
@@ -67,6 +69,8 @@ EOF
 ```
 
 アプリケーションをビルドしてDockerコンテナとして起動します。Consulサーバがすでに起動している場合は　`Ctrl+C`で停止してください。
+
+**sudoが必要な方は`run-sudo.sh`を実行してください。**
 
 ```shell
 $ chmod +x run.sh
@@ -152,7 +156,7 @@ app:
 
 > sudoでDockerを起動している場合は`visudo`でパスワードなしでRootユーザで起動できるようにして下さい。
 
-> sudoでDockerを起動している方は下記を実行して下さい。
+> sudoでDockerを起動している方はこちらを実行して下さい。
 > `mv updateconfig.sudo.sh updateconfig.sh`
 
 ```console
@@ -171,7 +175,13 @@ a6374bd453f6        consulconfigspring_app_6   "java -jar /app.jar"     13 minut
 この中からSpringアプリのIMAGE名の*prefix*を取得して下さい。この場合だと`consulconfigspring_app`です
 
 ```
-updateconfig.sh内の"IMAGE_NAME="を"IMAGE_NAME=consulconfigspring_app"に変更して下さい。
+updateconfig.sh内の
+
+"IMAGE_NAME="を
+
+"IMAGE_NAME=consulconfigspring_app"
+
+に変更して下さい。
 ```
 
 ```shell
@@ -258,3 +268,13 @@ How is Consul? from APP_6 at 172.23.0.2
 How is Consul? from APP_7 at 172.23.0.9
 ```
 Consulを利用することで設定をアプリからは透過的に変更することができることがわかりました。マイクロサービスなどを採用してアプリケーションの数が増えてきたときこの機能により数十、数百のアプリに対して自動で設定を反映させることが可能です。
+
+最後に`Ctr+C`で抜けて全コンテナを停止しておきましょう。
+
+```shell
+$ docker-compose down
+```
+
+## 参考リンク
+* [KV](https://www.consul.io/docs/agent/kv.html)
+* [Consul Connect Configuration](https://www.consul.io/docs/connect/configuration.html)
