@@ -114,6 +114,7 @@ EOF
 Proxyを稼働させるために以下のコマンドを別のターミナルを開いて実行します。
 
 ```shell
+$ consul reload
 $ consul connect proxy -sidecar-for dummy-1
 ```
 
@@ -145,6 +146,7 @@ EOF
 Proxyを稼働させるために以下のコマンドを別のターミナルを開いて実行します。
 
 ```shell
+$ consul reload
 $ consul connect proxy -sidecar-for dummy-2
 ```
 
