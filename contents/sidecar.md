@@ -13,14 +13,14 @@ $ DIR=$(pwd)
 $ mkdir consul-config-sidecar
 $ cat << EOF > consul-config-sidecar/consul-config.hcl
 datacenter = "dc1"
-
+data_dir  = "${DIR}/sidecar-car-data"
 server = true
 
 bootstrap_expect = 1
 ui               = true
 
-bind_addr   = "0.0.0.0"
-client_addr = "0.0.0.0"
+bind_addr   = "127.0.0.1"
+client_addr = "127.0.0.1"
 
 connect {
   enabled = true
@@ -29,10 +29,7 @@ EOF
 ```
 
 ```shell
-$ consul agent -server -bind=127.0.0.1 \
--client=0.0.0.0 \
--data-dir=${DIR}/sidecar-car-data \
--bootstrap-expect=1 -ui \
+$ consul agent -server \
 -config-dir=${DIR}/consul-config-sidecar
 ```
 
