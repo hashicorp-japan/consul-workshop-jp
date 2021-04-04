@@ -21,6 +21,7 @@
 
 ## Consul概要の学習
 こちらのビデオをご覧ください。
+
 [HashiCorp Consulで始めるマルチクラウドサービスメッシュ](https://www.youtube.com/watch?v=QruAFCchmog)
 
 ## Agenda
