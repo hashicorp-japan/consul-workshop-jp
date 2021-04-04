@@ -19,6 +19,10 @@
 
 * [Consul Overview](https://docs.google.com/presentation/d/126Y5PgELCuYcR-j4IRQcj7sxczMKT0PgFWS8x9StHXE/edit?usp=sharing)
 
+## Consul概要の学習
+こちらのビデオをご覧ください。
+[HashiCorp Consulで始めるマルチクラウドサービスメッシュ](https://www.youtube.com/watch?v=QruAFCchmog)
+
 ## Agenda
 
 1. [初めてのConsul](contents/hello-consul.md)
