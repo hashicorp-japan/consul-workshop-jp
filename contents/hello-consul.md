@@ -16,7 +16,6 @@ $ chmod +x /usr/local/bin/consul
 
 ```console
 $ consul --version
-Consul v1.5.1
 ```
 
 これでインストールは完了です。
