@@ -1,3 +1,9 @@
+Consulサーバを立ち上げます。
+
+```shell
+consul agent -dev
+```
+
 # Consul Service Discoveryを使ってみる
 
 Consulの機能は多岐に渡りますが、Service Discoveryはコアの機能です。Service Discoeryの機能によりシステムを構成するコンポーネント同士はService名ベースでの接続が可能となります。
@@ -6,7 +12,7 @@ Consulの機能は多岐に渡りますが、Service Discoveryはコアの機能
 
 ここではローカルにNginxを2インスタンス起動させConsulからService Discoveryの機能を試してみます。
 
-まずDockerで二つのインタンスを起動させます。
+Dockerで二つのインタンスを起動させます。
 
 ```shell
 $ cd consul-workshop
@@ -230,10 +236,10 @@ $ curl http://127.0.0.1:8500/v1/health/checks/nginx | jq .
 次にfooのコンテナを停止させてみます。
 
 ```shell
-$ docker rm -f nginx_foo_1
+$ docker stop nginx-foo-1
 ```
 
-再度確認してみます。
+少し時間を置いてから再度ヘルスチェックの確認をしてみます。
 ```shell
 $ curl http://127.0.0.1:8500/v1/health/checks/nginx | jq .
 ```
