@@ -1,9 +1,3 @@
-Consulサーバを立ち上げます。
-
-```shell
-consul agent -dev
-```
-
 # Consul Service Discoveryを使ってみる
 
 Consulの機能は多岐に渡りますが、Service Discoveryはコアの機能です。Service Discoeryの機能によりシステムを構成するコンポーネント同士はService名ベースでの接続が可能となります。
@@ -11,6 +5,12 @@ Consulの機能は多岐に渡りますが、Service Discoveryはコアの機能
 ここではサービスをいくつか登録し、実際のDNSやヘルスチェックなどの機能を試してみます。
 
 ここではローカルにNginxを2インスタンス起動させConsulからService Discoveryの機能を試してみます。
+
+Consulサーバを立ち上げます。
+
+```shell
+consul agent -dev
+```
 
 Dockerで二つのインタンスを起動させます。
 
