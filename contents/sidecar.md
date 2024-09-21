@@ -17,7 +17,9 @@ data_dir  = "${DIR}/sidecar-car-data"
 server = true
 
 bootstrap_expect = 1
-ui               = true
+ui_config{
+  enabled = true
+}
 
 bind_addr   = "127.0.0.1"
 client_addr = "127.0.0.1"
@@ -102,13 +104,12 @@ $ cat << EOF > consul-config-sidecar/dummy-1.json
     }
   }
 }
-
 EOF
 ```
 
 プロキシがリクエストを受け付けるためのリスナーの設定とUpstreamの設定を行なっています。`local_bind_port`の設定はサイドカーに同居しているアプリケーションが`dummy-2`のアプリにリクエストするためのローカルホストのリスナーです。
 
-Proxyを稼働させるために以下のコマンドを別のターミナルを開いて実行します。
+Proxyを稼働させるために以下のコマンドを別のターミナルを開いて実行します。エラーが出ると思いますが一旦無視してください。
 
 ```shell
 $ consul reload
@@ -140,7 +141,7 @@ $ cat << EOF > consul-config-sidecar/dummy-2.json
 EOF
 ```
 
-Proxyを稼働させるために以下のコマンドを別のターミナルを開いて実行します。
+Proxyを稼働させるために以下のコマンドを別のターミナルを開いて実行します。エラーが出ると思いますが一旦無視してください。
 
 ```shell
 $ consul reload
@@ -153,7 +154,7 @@ $ consul connect proxy -sidecar-for dummy-2
 
 Envoyを利用する際は`consul connect`のコマンドでEnvoyを指定するだけです。EnvoyはConsulのバイナリには組み込まれていないのでインストールを行う必要があります。
 
-[こちらの手順](https://www.envoyproxy.io/docs/envoy/latest/install/install)でEnvoyをインストールしてください。
+[こちらの手順](https://www.envoyproxy.io/docs/envoy/latest/start/install)でEnvoyをインストールしてください。
 
 既存のサイドカーのプロセスを停止したら、それぞれ別のターミナルで以下のコマンドを実行してください。
 
@@ -168,7 +169,7 @@ $ ps aux | grep envoy
 
 Envoyが起動していることがわかるでしょう。
 
-これ以降の章ではEnvoyやBuilt-inのを使って様々なSidecar Proxyの機能を試してみたいと思います。
+これ以降の章ではEnvoyやBuilt-inを使って様々なSidecar Proxyの機能を試してみたいと思います。
 
 
 ## 参考リンク
