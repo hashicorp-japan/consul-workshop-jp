@@ -1,0 +1,15 @@
+version: "3.3"
+services:
+  foo:
+    build:
+      context: ./foo-container
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+
+  bar:
+    build:
+      context: ./bar-container
+      dockerfile: Dockerfile
+    ports:
+      - 9090:80
