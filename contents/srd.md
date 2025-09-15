@@ -15,8 +15,7 @@ consul agent -dev
 Dockerで二つのインタンスを起動させます。
 
 ```shell
-$ cd consul-workshop
-$ git clone https://github.com/tkaburagi/nginx
+$ cd assets
 $ cd nginx
 
 $ docker-compose up -d
