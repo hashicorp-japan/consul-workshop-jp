@@ -1,19 +1,19 @@
 # Consul Service Configuration
 
-ConsulにはKey Valueのデータストアが内包されており、これを利用することで様々な処理を行うことができます。
+Consul には Key Value のデータストアが内包されており、これを利用することで様々な処理を行うことができます。
 
 * 各マイクロサービスへのコンフィグレーションの配布(Centerized Configurations)
-* Consul管理は以下のサービスのコンフィグレーションの自動アップデート(Consul Template)
-* KVSの値を監視して更新などをトリガーにしたイベント処理(Watch)
+* Consul 管理は以下のサービスのコンフィグレーションの自動アップデート(Consul Template)
+* KVS の値を監視して更新などをトリガーにしたイベント処理(Watch)
 
 などです。
 
-Watchは別の章で扱いますのでここでは`Centerized Configurations`を試してみたいと思います。
+Watch は別の章で扱いますのでここでは`Centerized Configurations`を試してみたいと思います。
 
 
-## Consul KVの使い方
+## Consul KV の使い方
 
-まず、Consul KVを使って簡単なデータのput/getをしてみましょう。
+まず、Consul KV を使って簡単なデータの put/get をしてみましょう。
 
 ```console 
 $ consul agent -dev
@@ -22,22 +22,22 @@ $ consul kv get my-first-kv/consulis
 useful
 ```
 
-`consulis`というキーに`useful`という値を入れて取り出しました。とても簡単です。Consul内のデータはConsulクラスタ内のノード同士でレプリケーションし、ユーザは意識することなくデータの冗長性を保つことができます。
+`consulis`というキーに`useful`という値を入れて取り出しました。とても簡単です。Consul 内のデータは Consul クラスタ内のノード同士でレプリケーションし、ユーザは意識することなくデータの冗長性を保つことができます。
 
-余裕のある方はWebブラウザの`Key/Value`のタブからも確認ができるのでそこから値を確認したり編集して、再度`consul kv get`をしてみて下さい。
+余裕のある方は Web ブラウザの`Key/Value`のタブからも確認ができるのでそこから値を確認したり編集して、再度`consul kv get`をしてみて下さい。
 
-`Ctrl+C`でConsulを停止してください。
+`Ctrl+C`で Consul を停止してください。
 
 ## Centerized Configurations
 
-Workshop用のディレクトリがない場合は任意のディレクトリを作りましょう。
+Workshop 用のディレクトリがない場合は任意のディレクトリを作りましょう。
 
 ```shell
 $ mkdir consul-workshop
 $ cd consul-workshop
 ```
 
-ここでは簡単なWebアプリを使ってConsulからWebアプリに設定を注入してみます。ConsulのKVSに設定を格納し、それを各アプリケーションが取得します。まずはアプリのレポジトリをクローンして、セットアップをします。
+ここでは簡単な Web アプリを使って Consul から Web アプリに設定を注入してみます。Consul の KVS に設定を格納し、それを各アプリケーションが取得します。まずはアプリのレポジトリをクローンして、セットアップをします。
 
 ```shell
 $ git clone https://github.com/tkaburagi/consul-config-spring
@@ -68,9 +68,9 @@ enable_central_service_config = true
 EOF
 ```
 
-アプリケーションをビルドしてDockerコンテナとして起動します。Consulサーバがすでに起動している場合は　`Ctrl+C`で停止してください。
+アプリケーションをビルドして Docker コンテナとして起動します。Consul サーバがすでに起動している場合は　`Ctrl+C`で停止してください。
 
-**sudoが必要な方は`run-sudo.sh`を実行してください。**
+**sudo が必要な方は`run-sudo.sh`を実行してください。**
 
 ```shell
 $ chmod +x run.sh
@@ -79,9 +79,9 @@ $ ./run.sh
 
 `http://127.0.0.1:8500`にブラウザでアクセスし、起動していることを確認してください。
 
-7つのアプリケーションインスタンスが起動しているはずです。
+7 つのアプリケーションインスタンスが起動しているはずです。
 
-それぞれがコンテナで起動し、1010 - 7070のポートでローカルホストからアクセスできるはずです。
+それぞれがコンテナで起動し、1010 - 7070 のポートでローカルホストからアクセスできるはずです。
 
 ```console
 $ curl 127.0.0.1:1010
@@ -92,9 +92,9 @@ hi from APP_1 at 172.23.0.4
 
 例えば、全アプリケーションのこの設定を変更し、出力するメッセージを変更する際、通常は設定を変更し、アプリケーションをビルドし直して、再デプロイするといった運用が必要です。
 
-これは単なるメッセージの文字列の設定だけでなく、環境ごとに変わるようなDBの設定、セキュリティやログレベルといった全ての設定で同じことが言えます。
+これは単なるメッセージの文字列の設定だけでなく、環境ごとに変わるような DB の設定、セキュリティやログレベルといった全ての設定で同じことが言えます。
 
-Consulでそのような複数のアプリに対する設定変更をどのように実現できるかをこのあと試してみます。
+Consul でそのような複数のアプリに対する設定変更をどのように実現できるかをこのあと試してみます。
 
 **別ターミナルを立ち上げて**アプリからのレスポンス内容を監視しておきます。
 
@@ -109,11 +109,11 @@ hi from APP_6 at 172.23.0.2
 hi from APP_7 at 172.23.0.5
 ```
 
-## Consulにコンフィグレーションを書き込む
+## Consul にコンフィグレーションを書き込む
 
-このアプリでは下記の`bootstrap.yml`の設定により、`config`というprefixのディレクトリの中に保存されている`data`という設定をアプリのコンフィグレーションとして扱うように設定しています。
+このアプリでは下記の`bootstrap.yml`の設定により、`config`という prefix のディレクトリの中に保存されている`data`という設定をアプリのコンフィグレーションとして扱うように設定しています。
 
-これはSpring Cloud Consulの機能を利用して抽象的な設定が可能ですが、他のアプリでも同じように実装できるはずです。
+これは Spring Cloud Consul の機能を利用して抽象的な設定が可能ですが、他のアプリでも同じように実装できるはずです。
 
 ```yaml
 spring:
@@ -128,7 +128,7 @@ spring:
         data: data
 ```
 
-ConsulのKVSを利用して、設定内容を書き込みます。
+Consul の KVS を利用して、設定内容を書き込みます。
 
 ```shell
 $ consul kv put config/application/data @app_config.yml
@@ -154,9 +154,9 @@ app:
 
 あとはアプリを再起動するだけです。
 
-> sudoでDockerを起動している場合は`visudo`でパスワードなしでRootユーザで起動できるようにして下さい。
+> sudo で Docker を起動している場合は`visudo`でパスワードなしで Root ユーザで起動できるようにして下さい。
 
-> sudoでDockerを起動している方はこちらを実行して下さい。
+> sudo で Docker を起動している方はこちらを実行して下さい。
 > `mv updateconfig.sudo.sh updateconfig.sh`
 
 ```console
@@ -172,7 +172,7 @@ a6374bd453f6        consulconfigspring_app_6   "java -jar /app.jar"     13 minut
 71f344799e6d        consul:1.6.0               "docker-entrypoint.s…"   15 minutes ago      Up 13 minutes       8300-8302/tcp, 8301-8302/udp, 8600/tcp, 8600/udp, 0.0.0.0:8500->8500/tcp   consulconfigspring_consul_1
 ```
 
-この中からSpringアプリのIMAGE名の*prefix*を取得して下さい。この場合だと`consulconfigspring_app`です
+この中から Spring アプリの IMAGE 名の*prefix*を取得して下さい。この場合だと`consulconfigspring_app`です
 
 ```
 updateconfig.sh内の
@@ -200,11 +200,11 @@ HEY HEY HEY from APP_6 at 172.23.0.2
 HEY HEY HEY from APP_7 at 172.23.0.1
 ```
 
-このようにアプリに一切変更を加えることなく設定をConsulから取得し反映させることができます。
+このようにアプリに一切変更を加えることなく設定を Consul から取得し反映させることができます。
 
-## Watchの利用
+## Watch の利用
 
-次にConsulの`watch`機能を利用し、KVSの更新をトリガーにスクリプトを実行させ、自動でアプリケーションの起動を行います。
+次に Consul の`watch`機能を利用し、KVS の更新をトリガーにスクリプトを実行させ、自動でアプリケーションの起動を行います。
 
 `${CONFIG_DIR}/consul-config.hcl`を変更します。
 
@@ -245,14 +245,14 @@ enable_central_service_config = true
 EOF
 ```
 
-`config/application/data`の更新をキーに、`updateconfig.sh`をinvokeしています。
-以下のコマンドでConsulの設定を反映させましょう。
+`config/application/data`の更新をキーに、`updateconfig.sh`を invoke しています。
+以下のコマンドで Consul の設定を反映させましょう。
 
 ```shell
 $ consul reload
 ```
 
-再度アプリの設定を変更します。次はWeb GUIから実行してみましょう。`http://127.0.0.1:8500/ui/dc1/kv/config/application/data/edit`こちらにアクセスし、`HEY HEY HEY`の値を任意の文字列に変更してください。
+再度アプリの設定を変更します。次は Web GUI から実行してみましょう。`http://127.0.0.1:8500/ui/dc1/kv/config/application/data/edit`こちらにアクセスし、`HEY HEY HEY`の値を任意の文字列に変更してください。
 
 変更後`Save`をクリックすると、`updateconfig.sh`の処理が開始されるはずです。
 
@@ -267,7 +267,7 @@ How is Consul? from APP_5 at 172.23.0.7
 How is Consul? from APP_6 at 172.23.0.2
 How is Consul? from APP_7 at 172.23.0.9
 ```
-Consulを利用することで設定をアプリからは透過的に変更することができることがわかりました。マイクロサービスなどを採用してアプリケーションの数が増えてきたときこの機能により数十、数百のアプリに対して自動で設定を反映させることが可能です。
+Consul を利用することで設定をアプリからは透過的に変更することができることがわかりました。マイクロサービスなどを採用してアプリケーションの数が増えてきたときこの機能により数十、数百のアプリに対して自動で設定を反映させることが可能です。
 
 最後に`Ctr+C`で抜けて全コンテナを停止しておきましょう。
 

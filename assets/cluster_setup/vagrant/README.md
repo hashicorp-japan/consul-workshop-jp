@@ -1,4 +1,4 @@
-# Consul clusterの構築　Vagrant版
+# Consul cluster の構築　Vagrant 版
 
 ## 前提条件
 
@@ -6,50 +6,50 @@
 * [Virtualbox](https://www.virtualbox.org/wiki/Downloads)
 * [Vagrantfile](Vagrantfile)
 
-## Vagrantの実行
+## Vagrant の実行
 
-Vagrantfileが置いてあるディレクトリに移動し、以下のコマンドを打ちます。
+Vagrantfile が置いてあるディレクトリに移動し、以下のコマンドを打ちます。
 ```shell
 vagrant up
 ```
 
-もしVagrant実行で下記のエラーが発生した場合は、Vagrantのvbguestプラグインが古い可能性があります。以下のコマンドでアップデートしてください。
+もし Vagrant 実行で下記のエラーが発生した場合は、Vagrant の vbguest プラグインが古い可能性があります。以下のコマンドでアップデートしてください。
 
 ```shell
 vagrant plugin update vagrant-vbguest
 ```
 
-Vagrantが自動的にVMやConsulのバイナリをダウンロードしてクラスタが構築されます。
+Vagrant が自動的に VM や Consul のバイナリをダウンロードしてクラスタが構築されます。
 
-この設定では、１台のConsulサーバーと２台のConsulクライアントが構築されます。
+この設定では、１台の Consul サーバーと２台の Consul クライアントが構築されます。
 
 * Server
   - IP address: 172.20.20.3
   - Hostname: server1
-  - Vagrantからのログイン方法：
+  - Vagrant からのログイン方法：
     - `vagrant ssh s1`
 
 * Client1
   - IP address: 172.20.20.4
   - Hostname: Client1
-  - Vagrantからのログイン方法：
+  - Vagrant からのログイン方法：
     - `vagrant ssh c1`
 
 * Client2
   - IP address: 172.20.20.5
   - Hostname: Client1
-  - Vagrantからのログイン方法：
+  - Vagrant からのログイン方法：
     - `vagrant ssh c2`
 
 ## 動作確認
 
-どれでも好きなVMにログインして、以下のコマンドを打ってください。
+どれでも好きな VM にログインして、以下のコマンドを打ってください。
 
 ```shell
 consul members
 ```
 
-このコマンドは現在参加していくクラスタにJoinしている全てのメンバーを表示します。以下のような出力であれば無事にクラスタが構築されています。
+このコマンドは現在参加していくクラスタに Join している全てのメンバーを表示します。以下のような出力であれば無事にクラスタが構築されています。
 
 ```console
 vagrant@client2:~$ consul members

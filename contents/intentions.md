@@ -1,6 +1,6 @@
 # Consul Service Mesh
 
-ConsulではService Discovery以外にもService Meshを実現するための様々な機能が用意されています。
+Consul では Service Discovery 以外にも Service Mesh を実現するための様々な機能が用意されています。
 
 * L7 Traffic Management
 * Security Policies
@@ -10,9 +10,9 @@ ConsulではService Discovery以外にもService Meshを実現するための様
 
 などが代表的な機能です。
 
-## Intentionsを使ったSecurity Policy
+## Intentions を使った Security Policy
 
-まずはIntentionsを利用したConsulのFirewall機能を試してみましょう。
+まずは Intentions を利用した Consul の Firewall 機能を試してみましょう。
 
 アプリのイメージは以下の通りです。
 
@@ -22,7 +22,7 @@ ConsulではService Discovery以外にもService Meshを実現するための様
 
 ### 事前準備
 
-GitHubからレポジトリをクローンします。
+GitHub からレポジトリをクローンします。
 
 ```shell
 $ pkill consul
@@ -30,20 +30,20 @@ $ cd consul-workshop
 $ git clone https://github.com/tkaburagi/consul-intentions-demo
 ```
 
-`docker-compose.yml`のファイルを見てください。`japanapp`,`corpapp`,`hashiapp`,`hashicorpjapanapp`の四つのアプリが定義されており、それぞれのコンテナにEnvoyがSidecar Proxyとして同居しています。詳しくは説明で補足します。
+`docker-compose.yml`のファイルを見てください。`japanapp`,`corpapp`,`hashiapp`,`hashicorpjapanapp`の四つのアプリが定義されており、それぞれのコンテナに Envoy が Sidecar Proxy として同居しています。詳しくは説明で補足します。
 
-トラフィックの流れとしては図の通りで`japanapp`が`Japan`の文字列を返し、`corpapp`が`japanapp`の結果に`Corp`の文字列をAppendして`Corp Japan`を返します。そして`hashiapp`が`Hashi`を返し、`hashicorpjapanapp`が`hashiapp`と`corpapp`にリクエストして結果の文字列を連結させ`HashiCorp Japa`をクライアントに返しています。
+トラフィックの流れとしては図の通りで`japanapp`が`Japan`の文字列を返し、`corpapp`が`japanapp`の結果に`Corp`の文字列を Append して`Corp Japan`を返します。そして`hashiapp`が`Hashi`を返し、`hashicorpjapanapp`が`hashiapp`と`corpapp`にリクエストして結果の文字列を連結させ`HashiCorp Japa`をクライアントに返しています。
 
 ### サイドカーの設定
 
-この流れをまずはSidecar Proxyの設定を作っていきます。
+この流れをまずは Sidecar Proxy の設定を作っていきます。
 
 ```shell
 $ cd consul-intentions-demo
 $ mkdir consul.d consul_data
 ```
 
-この中に4つのファイルを作っていきます。それぞれがサイドカーの設定となります。
+この中に 4 つのファイルを作っていきます。それぞれがサイドカーの設定となります。
 
 `sidecar-hashicorpjapanapp.json`
 
@@ -83,7 +83,7 @@ cat << EOF > consul.d/sidecar-hashicorpjapanapp.json
 EOF
 ```
 
-`hashiapp`と`corpapp`をUpstreamのDestinationとして設定しています。Proxyによりこれらのサービスにリクエストが振られます。
+`hashiapp`と`corpapp`を Upstream の Destination として設定しています。Proxy によりこれらのサービスにリクエストが振られます。
 
 `sidecar-hashiapp.json`
 
@@ -113,7 +113,7 @@ cat << EOF > consul.d/sidecar-hashiapp.json
 EOF
 ```
 
-`hashiapp`はUpstreamは行いませんのでHealtcheckのみの設定です。
+`hashiapp`は Upstream は行いませんので Healtcheck のみの設定です。
 
 `sidecar-corpapp.json`
 
@@ -148,7 +148,7 @@ cat << EOF > consul.d/sidecar-corpapp.json
 EOF
 ```
 
-`corpapp`は説明の通り`japanapp`から文字列を取得するためUpsetreamの設定を行なっています。
+`corpapp`は説明の通り`japanapp`から文字列を取得するため Upsetream の設定を行なっています。
 
 `sidecar-japanapp.json`
 
@@ -178,7 +178,7 @@ cat << EOF > consul.d/sidecar-japanapp.json
 EOF
 ```
 
-`japanapp`もUpstream先はありません。サイドカーの設定は以上です。
+`japanapp`も Upstream 先はありません。サイドカーの設定は以上です。
 
 `sidecar-unintentionalapp.json`
 
@@ -222,23 +222,23 @@ EOF
 
 ### アプリのデプロイ
 
-このコンフィグを使ってDockerコンテナを立ち上げてみます。
+このコンフィグを使って Docker コンテナを立ち上げてみます。
 
-**sudoが必要な方は`run-sudo.sh`を実行してください。**
+**sudo が必要な方は`run-sudo.sh`を実行してください。**
 
 ```shell
 $ ./run.sh
 ```
 
-上で作った各コンフィグレーションはDocker Composeの中で各コンテナにマウントされ、コンフィグとして扱われるように設定されています。
+上で作った各コンフィグレーションは Docker Compose の中で各コンテナにマウントされ、コンフィグとして扱われるように設定されています。
 
-GUIからこのような状態になっていれば起動は成功です。
+GUI からこのような状態になっていれば起動は成功です。
 <kbd>
   <img src="https://github-image-tkaburagi.s3.ap-northeast-1.amazonaws.com/consul-workshop/intentions-s.png">
 </kbd>
 
 
-Docker Composeの起動が完了したら各アプリをテストしてみましょう。
+Docker Compose の起動が完了したら各アプリをテストしてみましょう。
 
 ```console
 $ curl http://127.0.0.1:3030
@@ -257,11 +257,11 @@ $ curl http://127.0.0.1:9090
 HashiCorp Japan
 ```
 
-今の状態だとこのConsul上にある全てのサービスからどのAPIにもAPIにもアクセス出来てしまうためセキュアではありません。通常ファイヤーウォールなどを構築してセキュリティグループを定義していきますが、Consulではサービスベースの制御が可能です。
+今の状態だとこの Consul 上にある全てのサービスからどの API にも API にもアクセス出来てしまうためセキュアではありません。通常ファイヤーウォールなどを構築してセキュリティグループを定義していきますが、Consul ではサービスベースの制御が可能です。
 
-次に`Intentions`を使ってサービスベースでFWを組んでいきます。
+次に`Intentions`を使ってサービスベースで FW を組んでいきます。
 
-### Intentionsを使ったアクセス制御
+### Intentions を使ったアクセス制御
 
 まず全てのサービスをデフォルトでリクエストを受け付けないように設定します。
 
@@ -302,7 +302,7 @@ $ curl http://127.0.0.1:2020
 
 設定通りエラーとなりました。
 
-次にアプリが正常に動くようAllowの設定します。出来るだけ下記の手順を見ずに図を見ながら設定してみてください。`consul intention create -deny/-allow <SOURCE_SERVICE> <DEST_SERVICE>`です。
+次にアプリが正常に動くよう Allow の設定します。出来るだけ下記の手順を見ずに図を見ながら設定してみてください。`consul intention create -deny/-allow <SOURCE_SERVICE> <DEST_SERVICE>`です。
 
 完成形はこのようになります。
 
@@ -323,10 +323,10 @@ $ curl http://127.0.0.1:8080
 HashiCorp Japan
 ```
 
-きちんとEnd to Endでリクエストが処理されました。最後に意図しないサービスを立ち上げ、そこから各サービスにアクセスが出来ないことを確認します。
+きちんと End to End でリクエストが処理されました。最後に意図しないサービスを立ち上げ、そこから各サービスにアクセスが出来ないことを確認します。
 
 
-`unintentionalapp`にアクセスしてみます。このアプリはアプリの実態とUpstreamの設定は`hashicorpjapanapp`と同じですがIntentionsによりバックエンドのAPIサービスへのアクセスは許可されていません。
+`unintentionalapp`にアクセスしてみます。このアプリはアプリの実態と Upstream の設定は`hashicorpjapanapp`と同じですが Intentions によりバックエンドの API サービスへのアクセスは許可されていません。
 
 `9090`でアクセスできます。
 
@@ -337,7 +337,7 @@ $ curl http://127.0.0.1:9090
 
 エラーとなり許可しないサービス以外からはアクセスできないことがわかります。
 
-このようにIntentionsを利用するとサービスベースでACLを設定でき、物理的なロケーションのresolveはConsulに任せることができます。
+このように Intentions を利用するとサービスベースで ACL を設定でき、物理的なロケーションの resolve は Consul に任せることができます。
 
 最後に`Ctr+C`で抜けて全コンテナを停止しておきましょう。
 

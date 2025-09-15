@@ -1,14 +1,14 @@
-# Consulのメトリクスを監視する
+# Consul のメトリクスを監視する
 
-ConsulではConsulサーバやその配下にあるサービスやノードなどのメトリクスを効率的に可視化するための様々な機能が用意されています。
+Consul では Consul サーバやその配下にあるサービスやノードなどのメトリクスを効率的に可視化するための様々な機能が用意されています。
 
 * Telemetry
 * L7 Obervalibity
 * Traffic Tracing
 
-などです。ここでは`Telemetry`, `L7`を試してみます。Tracingについては後で追加します。
+などです。ここでは`Telemetry`, `L7`を試してみます。Tracing については後で追加します。
 
-[Intentionsの章](https://github.com/hashicorp-japan/consul-workshop/blob/master/contents/intentions.md)で利用したアプリを使うのでこの手順が終わっていない方は`アプリのデプロイ`までを終了させてください。
+[Intentions の章](https://github.com/hashicorp-japan/consul-workshop/blob/master/contents/intentions.md)で利用したアプリを使うのでこの手順が終わっていない方は`アプリのデプロイ`までを終了させてください。
 
 終了している方は以下の手順を進めてください。また終了している方も手順に沿って起動を行なってください。
 
@@ -17,11 +17,11 @@ $ pwd
 /path/to/consul-workshop/consul-intentions-demo
 ```
 
-## Telemetryの設定を行う
+## Telemetry の設定を行う
 
-まずは各サーバにインストールされているConsul Agentを使ってメトリクスを取得するパターンを試してみます。Consulでは `statsite`, `statsd`にログを転送したり、`Prometheus`のフォーマットでログを出力させ、スクレイピングさせたり出来ます。
+まずは各サーバにインストールされている Consul Agent を使ってメトリクスを取得するパターンを試してみます。Consul では `statsite`, `statsd`にログを転送したり、`Prometheus`のフォーマットでログを出力させ、スクレイピングさせたり出来ます。
 
-ここではPrometheusを使ってみます。
+ここでは Prometheus を使ってみます。
 
 `consul_config/consul-config.hcl`ファイルの最後に以下の行を追加します。
 
@@ -31,9 +31,9 @@ telemetry = {
 }
 ```
 
-この設定を加えることでPrometheusのフォーマットでメトリクスがexposeされます。また、ここではメトリクスの保持時間として3時間を指定しています。
+この設定を加えることで Prometheus のフォーマットでメトリクスが expose されます。また、ここではメトリクスの保持時間として 3 時間を指定しています。
 
-設定はこれだけです。設定を反映させるためにConsulを再起動します。
+設定はこれだけです。設定を反映させるために Consul を再起動します。
 
 ```shell
 $ docker-compose down
@@ -77,9 +77,9 @@ consul_9ad423be44a4_runtime_malloc_count 4.109002e+06
 
 各メトリクスの情報は[こちら](https://www.consul.io/docs/agent/telemetry.html)を参考にして下さい。
 
-## L7 Observabilityの設定を行う
+## L7 Observability の設定を行う
 
-Consulでは上記で設定したConsulクラスタに関わるメトリクスの他にEnvoyと連携をして各サービスのL7を含めたメトリクスを簡単に出力することが出来ます。
+Consul では上記で設定した Consul クラスタに関わるメトリクスの他に Envoy と連携をして各サービスの L7 を含めたメトリクスを簡単に出力することが出来ます。
 
 `consul_config/consul-config.hcl`ファイルの最後に以下の行を追加します。
 
@@ -96,9 +96,9 @@ config_entries {
 }
 ```
 
-各サービスに関わるサイドカーの設定を`proxy-defaults`としてセットしています。各サービスのEnvoyで出力されるメトリクスを`9102`でスクレイプ出来る様にしてあります。
+各サービスに関わるサイドカーの設定を`proxy-defaults`としてセットしています。各サービスの Envoy で出力されるメトリクスを`9102`でスクレイプ出来る様にしてあります。
 
-設定を反映させるためにConsulを再起動します。
+設定を反映させるために Consul を再起動します。
 
 ```shell
 $ docker-compose down
@@ -130,11 +130,11 @@ envoy_ext_authz_connect_authz_cx_closed{local_cluster="hashicorpjapanapp"} 0
 
 メトリクスが出力されています。
 
-次にこれらのメトリクスをPrometheusで収集してみましょう。
+次にこれらのメトリクスを Prometheus で収集してみましょう。
 
-## Prometheusで収集する
+## Prometheus で収集する
 
-Prometheusの設定ファイルを作ります。Prometheusでは`consul_sd_config`というConsulのService Dicoveryを利用して、Consul配下にあるサービス群を動的に監視出来るような連携機能が用意されています。
+Prometheus の設定ファイルを作ります。Prometheus では`consul_sd_config`という Consul の Service Dicovery を利用して、Consul 配下にあるサービス群を動的に監視出来るような連携機能が用意されています。
 
 ```shell
 $ cat << EOF > prometheus-envoy-intensions-demo.yml
@@ -189,7 +189,7 @@ scrape_configs:
 EOF
 ```
 
-次にDocker ComposeにPrometheusを追加します。
+次に Docker Compose に Prometheus を追加します。
 
 ```shell
 cat << EOF > docker-compose.yml
@@ -328,18 +328,18 @@ networks:
 EOF
 ```
 
-一旦Dockerを再起動しましょう。
+一旦 Docker を再起動しましょう。
 
 ```shell
 $ docker-compose down
 $ docker-compose up -d
 ```
 
-起動後、`http://localhost:9999/graph`にアクセスをするとPrometheusの画面が見れるでしょう。
+起動後、`http://localhost:9999/graph`にアクセスをすると Prometheus の画面が見れるでしょう。
 
 検索ボックスから任意のメトリクスを入力してグラフを作ってみてください。
 
-この様にPrometheusでメトリクスを集約し、Grafanaなどのダッシュボードのツールで環境の一括監視を簡単に行うことが出来ます。
+この様に Prometheus でメトリクスを集約し、Grafana などのダッシュボードのツールで環境の一括監視を簡単に行うことが出来ます。
 
 ## 参考リンク
 * [Telemetry](https://www.consul.io/docs/agent/telemetry.html)

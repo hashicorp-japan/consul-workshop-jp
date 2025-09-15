@@ -1,10 +1,10 @@
-# L7 Traffic Managementを試す
+# L7 Traffic Management を試す
 
-より高度なService Meshを実現するためConsul1.6からL7のTraffic Managementの機能が追加されました。HTTPパスベースのルーティング、トラフィックの重み付け、フェイルオーバーなどの機能が追加され、A/B Test, Canary Upgrade, Blue/Green Deploymentなどが実現できます。
+より高度な Service Mesh を実現するため Consul1.6 から L7 の Traffic Management の機能が追加されました。HTTP パスベースのルーティング、トラフィックの重み付け、フェイルオーバーなどの機能が追加され、A/B Test, Canary Upgrade, Blue/Green Deployment などが実現できます。
 
 ここではそれらの機能を簡単なサンプルで実行してみます。
 
-ConsulのL7 Traffic Managementの機能は
+Consul の L7 Traffic Management の機能は
 
 * Routing
 * Splitting
@@ -14,7 +14,7 @@ ConsulのL7 Traffic Managementの機能は
 
 ## Service Routing
 
-まずは`Service Routing`を扱ってみましょう。Service RoutingではHTTPパスやヘッダーなどの情報を基にルーティングを制御することができ、ABテストたCanaryデプロイを柔軟に行うことができます。
+まずは`Service Routing`を扱ってみましょう。Service Routing では HTTP パスやヘッダーなどの情報を基にルーティングを制御することができ、AB テストた Canary デプロイを柔軟に行うことができます。
 
 まずは利用するアプリケーションをクローンします。
 ```shell
@@ -22,7 +22,7 @@ $ cd path/to/consul-workshop
 $ https://github.com/tkaburagi/consul-l7-routing
 ```
 
-`docker-compose.yaml`を見るとConsul, web, api-v1とそれぞれのSidecar Proxyとして動作するEnvoyが稼働することがわかります。
+`docker-compose.yaml`を見ると Consul, web, api-v1 とそれぞれの Sidecar Proxy として動作する Envoy が稼働することがわかります。
 
 ## 設定を作成する
 
@@ -118,11 +118,11 @@ EOF
   <img src="https://github-image-tkaburagi.s3-ap-northeast-1.amazonaws.com/consul-workshop/l7-1.png">
 </kbd>
 
-ここでは、Consul上は`greetings-api-v1`も`greetings-api-v2`も`greetings-api`というサービス名で登録し、各バージョンをサブセットとして管理することにします。`greetings-api-v1`と`greetings-api-v2`にこの設定の中で`meta.version`というメタデータをセットしていることを確認してください。
+ここでは、Consul 上は`greetings-api-v1`も`greetings-api-v2`も`greetings-api`というサービス名で登録し、各バージョンをサブセットとして管理することにします。`greetings-api-v1`と`greetings-api-v2`にこの設定の中で`meta.version`というメタデータをセットしていることを確認してください。
 
-それでは次にL7 Traffic Managementの設定を行なっていきます。`central`フォルダに設定を作っていきます。
+それでは次に L7 Traffic Management の設定を行なっていきます。`central`フォルダに設定を作っていきます。
 
-まずは`sevice-defaults`の設定です。これは各サービスに反映させるグローバルな設定です。ここではHTTPで各サービスをやり取りさせるためプロトコルをHTTPとして設定します。
+まずは`sevice-defaults`の設定です。これは各サービスに反映させるグローバルな設定です。ここでは HTTP で各サービスをやり取りさせるためプロトコルを HTTP として設定します。
 
 ```shell
 $ cat << EOF > central/api_service_defaults.hcl
@@ -154,11 +154,11 @@ subsets = {
 EOF
 ```
 
-`Service.Meta.version`の値が1のものを`greetings-api`の`v1`, 2のものを`v2`として定義しています。またデフォルトのサブセットは`v1`です。
+`Service.Meta.version`の値が 1 のものを`greetings-api`の`v1`, 2 のものを`v2`として定義しています。またデフォルトのサブセットは`v1`です。
 
 このサブセットを利用してこの後に作成するルーティングの設定をコントロールします。
 
-最後に`service-routing`の設定です。ここではHTTPヘッダーの値を基にアップストーム先を切り替えるように設定していきます。
+最後に`service-routing`の設定です。ここでは HTTP ヘッダーの値を基にアップストーム先を切り替えるように設定していきます。
 
 ```shell
 $ cat << EOF > central/api_service_router.hcl
@@ -190,15 +190,15 @@ routes = [
 
 ## 起動する
 
-ここでコンテナを起動してみましょう。まずはv1のアプリだけが起動し、v2のアプリは一旦動作を試してから起動させることにします。
+ここでコンテナを起動してみましょう。まずは v1 のアプリだけが起動し、v2 のアプリは一旦動作を試してから起動させることにします。
 
 ```shell
 $ docker-compose up
 ``` 
 
-起動が完了したら`http://127.0.0.1:8500/ui/dc1/services`にアクセスしてみてください。webとapiとそれぞれのサイドカーが起動しているはずです。
+起動が完了したら`http://127.0.0.1:8500/ui/dc1/services`にアクセスしてみてください。web と api とそれぞれのサイドカーが起動しているはずです。
 
-まずHTTPヘッダーに`true`以外の値をセットしてリクエストしてみましょう。
+まず HTTP ヘッダーに`true`以外の値をセットしてリクエストしてみましょう。
 
 ```console
 $ curl  127.0.0.1:9090/ --header "canary: false"
@@ -212,9 +212,9 @@ $ curl  127.0.0.1:9090/ --header "canary: true"
 {"timestamp":"2019-11-20T03:50:06.726+0000","status":500,"error":"Internal Server Error","message":"503 Service Unavailable","path":"/"}
 ```
 
-Service Unavailableとなるでしょう。これはv2が起動していないためです。
+Service Unavailable となるでしょう。これは v2 が起動していないためです。
 
-それではv2を起動してみます。
+それでは v2 を起動してみます。
 
 ```shell
 docker-compose -f docker-compose-v2.yaml up
@@ -222,7 +222,7 @@ docker-compose -f docker-compose-v2.yaml up
 
 `http://127.0.0.1:8500/ui/dc1/services/greetings-api`にアクセスすると、同一サービスの下に新しいバージョンのインスタンスが立ち上がっています。
 
-それではここにHTTPヘッダーのルーティングでトラフィックを送ってみます。
+それではここに HTTP ヘッダーのルーティングでトラフィックを送ってみます。
 
 ```console
 $ curl  127.0.0.1:9090/ --header "canary: true"
@@ -232,7 +232,7 @@ $ curl  127.0.0.1:9090/ --header "canary: false"
 Greetings From API -> <200,hi i am v1
 ```
 
-上記のように`v1`, `v2`に対してルーティングがなされていることがわかるはずです。今回はヘッダーを例に扱いましたが同様にパスベースやパラメータベースでのL7ルーティングを行うことができます。
+上記のように`v1`, `v2`に対してルーティングがなされていることがわかるはずです。今回はヘッダーを例に扱いましたが同様にパスベースやパラメータベースでの L7 ルーティングを行うことができます。
 
 ## 参考リンク
 * [L7 Traffic Management](https://www.consul.io/docs/connect/l7-traffic-management.html)

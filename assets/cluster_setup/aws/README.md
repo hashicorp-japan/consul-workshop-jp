@@ -1,27 +1,27 @@
-# AWS上へConsulクラスタを構築する
+# AWS 上へ Consul クラスタを構築する
 
-Consulクラスタの構築方法は多くの方法がありますが、ここでは最も汎用なModuleを使った構築方法を行います。
+Consul クラスタの構築方法は多くの方法がありますが、ここでは最も汎用な Module を使った構築方法を行います。
 
 
 ## 必要なコードをダウンロード
 
-まずは以下のGithub RepositoryをCloneもしくはZipをダウンロードしてください。
+まずは以下の Github Repository を Clone もしくは Zip をダウンロードしてください。
 
 [https://github.com/hashicorp/terraform-aws-consul](https://github.com/hashicorp/terraform-aws-consul)
 
-ちなみにこのRepositoryはTerraformの[Public Module Registry](https://registry.terraform.io/modules/hashicorp/consul/aws/0.7.3)上で公開されているModuleのRepositoryでもあります。非常に汎用的に作られているので、すでにTerraformでインフラ構築をしてるなら、このModuleを組み込むのもいいかもしれません。
+ちなみにこの Repository は Terraform の[Public Module Registry](https://registry.terraform.io/modules/hashicorp/consul/aws/0.7.3)上で公開されている Module の Repository でもあります。非常に汎用的に作られているので、すでに Terraform でインフラ構築をしてるなら、この Module を組み込むのもいいかもしれません。
 
-Cloneもしくはダウンロードができましたら、いくつかの修正を加える必要があります。
+Clone もしくはダウンロードができましたら、いくつかの修正を加える必要があります。
 
 
 ## 変数を修正
 
-variables.tf (top directoryにあるもの）を開いてくさあい。
+variables.tf (top directory にあるもの）を開いてくさあい。
 
-* AMIのImage ID
-	* お使いのRegionにより以下のリストより選んでください。
+* AMI の Image ID
+	* お使いの Region により以下のリストより選んでください。
 		[https://github.com/hashicorp/terraform-aws-consul/blob/master/_docs/ubuntu16-ami-list.md](https://github.com/hashicorp/terraform-aws-consul/blob/master/_docs/ubuntu16-ami-list.md)
-	* ちなみにここではあらかじめ準備してある汎用のAMIを使いますが、もし皆さんの環境でConsulクラスタを構築する際は、かならず独自にAMIを準備してください。AMIの構築には、弊社の製品である(Packer)[https://www.packer.io/]をお勧めします。
+	* ちなみにここではあらかじめ準備してある汎用の AMI を使いますが、もし皆さんの環境で Consul クラスタを構築する際は、かならず独自に AMI を準備してください。AMI の構築には、弊社の製品である(Packer)[https://www.packer.io/]をお勧めします。
 
 ```hcl
 variable "ami_id" {
@@ -32,7 +32,7 @@ variable "ami_id" {
 ```
 
 
-次に、ハンズオン用としてミニマムなクラスタサイズにします。ここではサーバー数を１とし、クライアントを２とします。（お好きな数をProvisionしても構いません）
+次に、ハンズオン用としてミニマムなクラスタサイズにします。ここではサーバー数を１とし、クライアントを２とします。（お好きな数を Provision しても構いません）
 
 ```hcl
 variable "num_servers" {
@@ -48,7 +48,7 @@ variable "num_clients" {
 }
 ```
 
-また必須ではないですが、もしProvisionしたサーバーにSSHでアクセスしたいのであれば、ssh keypairも指定してください。
+また必須ではないですが、もし Provision したサーバーに SSH でアクセスしたいのであれば、ssh keypair も指定してください。
 
 ```hcl
 variable "ssh_key_name" {
@@ -60,9 +60,9 @@ variable "ssh_key_name" {
 
 ## Provision
 
-それではProvisionしてみましょう。
+それでは Provision してみましょう。
 
-まずは、AWSにアクセスするためにクレデンシャルを環境変数に設定してください。
+まずは、AWS にアクセスするためにクレデンシャルを環境変数に設定してください。
 
 ```shell
 export AWS_ACCESS_KEY_ID="xxxxxxxxxxxxxxx"
@@ -70,31 +70,31 @@ export AWS_SECRET_ACCESS_KEY="xxxxxxxxxxxxxxxxx"
 export AWS_DEFAULT_REGION="ap-northeast-1"    # 日本
 ```
 
-次にTerraformを初期化しProvisionに備えます。
+次に Terraform を初期化し Provision に備えます。
 
 ```shell
 terraform init
 ```
 
-問題なくPlug-inなどがダウンロードできたら、Planを行います。
+問題なく Plug-in などがダウンロードできたら、Plan を行います。
 
 ```shell
 terraform plan
 ```
 
-問題なければ実際にProvisionします。
+問題なければ実際に Provision します。
 
 
 ```shell
 terraform apply -auto-approve
 ```
 
-これでConsulクラスタがAWS上に構築されます。
+これで Consul クラスタが AWS 上に構築されます。
 
 
-## Consulクラスタへのアクセス確認
+## Consul クラスタへのアクセス確認
 
-AWSのConsole、CLIもしくは、以下のスクリプトを実行してConsulサーバーのIPアドレスを取得します。
+AWS の Console、CLI もしくは、以下のスクリプトを実行して Consul サーバーの IP アドレスを取得します。
 
 ```console
 $examples/consul-examples-helper/consul-examples-helper.sh
@@ -123,13 +123,13 @@ To see the Consul UI, open the following URL in your web browser:
 
 ```
 
-ここで得られたIPアドレスを環境変数に追加します。
+ここで得られた IP アドレスを環境変数に追加します。
 
 ```shell
 $export CONSUL_HTTP_ADDR=13.115.58.242:8500
 ```
 
-これにより、このシェル上での`consul`コマンドはAPIリクエストをAWS上のConsulサーバーへ送信するようになります。
+これにより、このシェル上での`consul`コマンドは API リクエストを AWS 上の Consul サーバーへ送信するようになります。
 
 試してみましょう。
 

@@ -1,18 +1,18 @@
-# 初めてのConsul
+# 初めての Consul
 
-ConsulにDevモードという、複雑な設定や準備の必要なく、簡単にConsul機能を試すモードがあります。起動方法は簡単で、Consulのバイナリをダウンロードし、以下のコマンドを叩くだけです。
+Consul に Dev モードという、複雑な設定や準備の必要なく、簡単に Consul 機能を試すモードがあります。起動方法は簡単で、Consul のバイナリをダウンロードし、以下のコマンドを叩くだけです。
 
-## Consulのインストール
+## Consul のインストール
 
-[こちら](https://www.consul.io/downloads.html)のWebサイトからご自身のOSに合ったものをダウンロードしてください。
+[こちら](https://www.consul.io/downloads.html)の Web サイトからご自身の OS に合ったものをダウンロードしてください。
 
-パスを通します。以下はmacOSの例ですが、OSにあった手順で consulコマンドにパスを通します。
+パスを通します。以下は macOS の例ですが、OS にあった手順で consul コマンドにパスを通します。
 
 ```shell
 $ mv /path/to/consul /usr/local/bin
 $ chmod +x /usr/local/bin/consul
 ```
-新しい端末を立ち上げ、Consulのバージョンを確認します。
+新しい端末を立ち上げ、Consul のバージョンを確認します。
 
 ```console
 $ consul --version
@@ -20,15 +20,15 @@ $ consul --version
 
 これでインストールは完了です。
 
-## ConsulをDevモードで触ってみる
+## Consul を Dev モードで触ってみる
 
-次にConsulサーバを立ち上げ、ConsulのService Discoveryの機能を試してみます。
+次に Consul サーバを立ち上げ、Consul の Service Discovery の機能を試してみます。
 
 ```shell
 consul agent -dev
 ```
 
-`consul agent`コマンドは、Consulサーバーやクライエントを起動する際に使われます。 通常は様々な設定をコマンドラインオプションや設定ファイルで行いますが、`-dev`ではそのあたりの設定が簡素化されます。あくまでもデモ用途や機能検証などのためですので、本番環境などには推奨しません。
+`consul agent`コマンドは、Consul サーバーやクライエントを起動する際に使われます。 通常は様々な設定をコマンドラインオプションや設定ファイルで行いますが、`-dev`ではそのあたりの設定が簡素化されます。あくまでもデモ用途や機能検証などのためですので、本番環境などには推奨しません。
 
 それでは上記のコマンドを実行してみましょう。
 
@@ -82,23 +82,23 @@ $ consul agent -dev
     2019/08/20 17:35:48 [DEBUG] agent: Node info in sync
 ```
 
-様々な情報が出力され、Consulサーバーが起動しました。Consulはプロセスとして走り続けますので、別のターミナルを開いてください。
+様々な情報が出力され、Consul サーバーが起動しました。Consul はプロセスとして走り続けますので、別のターミナルを開いてください。
 
-Consulはデフォルトで以下のアドレスとポートが使われます。
+Consul はデフォルトで以下のアドレスとポートが使われます。
 
 
 | IP address      | Port | 用途 |
 | --------------- |----- | --- | 
-| Client address  | 8500 | HTTP APIのインターフェース | 
-| Client address  | 8501 | HTTPS APIのインターフェース|  
-| Client address  | 8502 | gRPC APIのインターフェース |  
-| Client address  | 8600 | DNSのインターフェース |  
-| Cluster address | 8300 | サーバー間のRPC用 | 
+| Client address  | 8500 | HTTP API のインターフェース | 
+| Client address  | 8501 | HTTPS API のインターフェース|  
+| Client address  | 8502 | gRPC API のインターフェース |  
+| Client address  | 8600 | DNS のインターフェース |  
+| Cluster address | 8300 | サーバー間の RPC 用 | 
 | Cluster address | 8301 | LAN Serf | 
 | Cluster address | 8302 | WAN Serf | 
 
 
-Client addressは、Consulの機能にアクセスしたいクライアントとの通信に使われ、Cluster addressはConsulサーバー間の通信に使用されます。
+Client address は、Consul の機能にアクセスしたいクライアントとの通信に使われ、Cluster address は Consul サーバー間の通信に使用されます。
 ポートについてのより詳細なドキュメントは[こちら](https://www.consul.io/docs/install/ports.html)にあります。
 
 それでは以下のコマンドを実行してみましょう。
@@ -109,16 +109,16 @@ Node                 Address         Status  Type    Build      Protocol  DC   S
 masa-mackbook.local  127.0.0.1:8301  alive   server  1.5.1+ent  2         dc1  <all>
 ```
 
-`consul members`はこのクラスタにJoinしているサーバーやクライアントを表示します。現時点は一つのサーバーだけが存在しています。
+`consul members`はこのクラスタに Join しているサーバーやクライアントを表示します。現時点は一つのサーバーだけが存在しています。
 
 
 ## サービスの登録
 
-Consulの持つ機能の一つにService Registration（サービス登録）やService Discoveryがあります。詳細については、別のワークショップでカバーしますが、ここで簡単に試してみましょう。
+Consul の持つ機能の一つに Service Registration（サービス登録）や Service Discovery があります。詳細については、別のワークショップでカバーしますが、ここで簡単に試してみましょう。
 
-サービスの登録方法はいくつかあるのですが、ここでは簡単なCLIからの登録をやってみます。
+サービスの登録方法はいくつかあるのですが、ここでは簡単な CLI からの登録をやってみます。
 
-まず、webというサービスがあり、IPアドレスが10.0.0.10のノードポート8080番で動いてるとします。ちなみに、ここでは実際にこのサービスが動いているかは気にしません。このサービスを登録するには以下のコマンドを打ちます。
+まず、web というサービスがあり、IP アドレスが 10.0.0.10 のノードポート 8080 番で動いてるとします。ちなみに、ここでは実際にこのサービスが動いているかは気にしません。このサービスを登録するには以下のコマンドを打ちます。
 
 ```console
 $ consul services register -name=web -address=10.0.0.10 -port=8080
@@ -137,13 +137,13 @@ web
 
 ## Service Discovery
 
-登録したサービスはいくつかの方法でDiscoverできます。
+登録したサービスはいくつかの方法で Discover できます。
 
 * DNS interface
 * API
 * CLI
 
-ここでは`dig`コマンドによるDNS queryを使ってみましょう。ConsulのDNSはポート8600番なので、そこに対してQueryを発行します。また、サービス名は`<service名>.service.consul`という形式でLookupできます。
+ここでは`dig`コマンドによる DNS query を使ってみましょう。Consul の DNS はポート 8600 番なので、そこに対して Query を発行します。また、サービス名は`<service名>.service.consul`という形式で Lookup できます。
 
 
 ```console
@@ -175,13 +175,13 @@ web.service.consul.	0	IN	TXT	"consul-network-segment="
 ```
 
 登録した通り`10.0.0.10`が返ってきました。
-ここでは、存在していないサービスを登録してService discoveryを試しましたが、現実世界においては、確実に存在しているサービスを登録する必要があります。また、そのサービスが正常に稼働しているかをチェックするHealth checkも行う必要があります。ConsulによるHealth checkや他のサービス登録方法などは別のワークショップで行います。
+ここでは、存在していないサービスを登録して Service discovery を試しましたが、現実世界においては、確実に存在しているサービスを登録する必要があります。また、そのサービスが正常に稼働しているかをチェックする Health check も行う必要があります。Consul による Health check や他のサービス登録方法などは別のワークショップで行います。
 
-## 通常モードでConsulを起動する
+## 通常モードで Consul を起動する
 
-次に`dev`モードではなく通常モードでConsulを起動してみましょう。起動には`consul`コマンドの引数に設定を記述するかjsonや`HashiCorp Configuration Language`(HCL)でファイルとして記述するなどの方法があります。
+次に`dev`モードではなく通常モードで Consul を起動してみましょう。起動には`consul`コマンドの引数に設定を記述するか json や`HashiCorp Configuration Language`(HCL)でファイルとして記述するなどの方法があります。
 
-ここでは引数に設定してみます。`-data-dir`の値はご自身の環境に合わせて好きな場所をして下さい。devモードで起動しているターミナルを止めて次を実行します。
+ここでは引数に設定してみます。`-data-dir`の値はご自身の環境に合わせて好きな場所をして下さい。dev モードで起動しているターミナルを止めて次を実行します。
 
 ```shell
 $ mkdir -p consul-workshop/consul.d
@@ -195,12 +195,12 @@ $ consul agent -server -bind=127.0.0.1 \
 -config-dir=${DIR}/consul.d
 ```
 
-同様にConsulが起動するでしょう。最後にWebブラウザにアクセスしてみます。`http://127.0.0.1:8500`にアクセスしてみましょう。
+同様に Consul が起動するでしょう。最後に Web ブラウザにアクセスしてみます。`http://127.0.0.1:8500`にアクセスしてみましょう。
 
 > サーバ上で実行しローカルからブラウザにアクセスできない方はポートフォワーディングの設定をしてみて下さい。
-> macOSの場合はローカルマシンで`ssh -L 8500:127.0.0.1:8500 <username>@<SERVERS_PUBLIC_IP> -N`です。
+> macOS の場合はローカルマシンで`ssh -L 8500:127.0.0.1:8500 <username>@<SERVERS_PUBLIC_IP> -N`です。
 
-`Services`のタブにConsulと表示され、`Nodes`のタブにご自身のラップトップが登録されていることがわかるでしょう。
+`Services`のタブに Consul と表示され、`Nodes`のタブにご自身のラップトップが登録されていることがわかるでしょう。
 
 以降の章ではこの環境を使って実際の機能を試してみます。
 
