@@ -1,10 +1,10 @@
-# Sidecar Proxyを導入する
+# Sidecar Proxy を導入する
 
-Consulではサイドカーを導入してアプリケーションからは透過的にTLS通信などを実現出来ます。Consulのサイドカーはplugableです。Built-inのL4プロキシ、Envoyやカスタムのサイドカーも選択出来ます。
+Consul ではサイドカーを導入してアプリケーションからは透過的に TLS 通信などを実現出来ます。Consul のサイドカーは plugable です。Built-in の L4 プロキシ、Envoy やカスタムのサイドカーも選択出来ます。
 
-ここではEnvoyとBuilt-inのプロキシを使ってみましょう。
+ここでは Envoy と Built-in のプロキシを使ってみましょう。
 
-Consulを起動してサービスを起動しておきましょう。
+Consul を起動してサービスを起動しておきましょう。
 
 ```shell
 $ pkill consul
@@ -35,16 +35,16 @@ $ consul agent -server \
 -config-dir=${DIR}/consul-config-sidecar
 ```
 
-## Built-in Proxyを利用する
+## Built-in Proxy を利用する
 
-ConsulではBuilt-inのProxyが用意されており追加で他のソフトウェアをインストールすることなくサイドカーを導入できます。Built-inのProxyはL4プロキシのためL7の機能は提供されていません。
+Consul では Built-in の Proxy が用意されており追加で他のソフトウェアをインストールすることなくサイドカーを導入できます。Built-in の Proxy は L4 プロキシのため L7 の機能は提供されていません。
 
-プロキシを導入するときはService Definitionの中に定義していきます。定義にはJSONかHCLを使います。定義の方法は二つあります。
+プロキシを導入するときは Service Definition の中に定義していきます。定義には JSON か HCL を使います。定義の方法は二つあります。
 
 * 独立したファイルで設定を定義する
 * サービスの設定にネストして設定を定義する
 
-ここでは後者の方法で試してみます。ダミーのサービスを一つConsulに登録するための定義を作成します。実際のサービスは動いていません。`| dummy-1 -> Sidecar | -> | Sidecar -> dummy-2 |`のようなトラフィックの流れを作っていきます。
+ここでは後者の方法で試してみます。ダミーのサービスを一つ Consul に登録するための定義を作成します。実際のサービスは動いていません。`| dummy-1 -> Sidecar | -> | Sidecar -> dummy-2 |`のようなトラフィックの流れを作っていきます。
 
 ```shell
 $ cat << EOF > consul-config-sidecar/dummy-1.json
@@ -68,7 +68,7 @@ $ cat << EOF > consul-config-sidecar/dummy-2.json
 EOF
 ```
 
-先ほどまではCLIでサービスを登録しましたが、ここでは設定ファイルから登録を行なっています。これを反映させるために以下のコマンドを実行します。
+先ほどまでは CLI でサービスを登録しましたが、ここでは設定ファイルから登録を行なっています。これを反映させるために以下のコマンドを実行します。
 
 ```shell
 $ consul reload
@@ -107,16 +107,16 @@ $ cat << EOF > consul-config-sidecar/dummy-1.json
 EOF
 ```
 
-プロキシがリクエストを受け付けるためのリスナーの設定とUpstreamの設定を行なっています。`local_bind_port`の設定はサイドカーに同居しているアプリケーションが`dummy-2`のアプリにリクエストするためのローカルホストのリスナーです。
+プロキシがリクエストを受け付けるためのリスナーの設定と Upstream の設定を行なっています。`local_bind_port`の設定はサイドカーに同居しているアプリケーションが`dummy-2`のアプリにリクエストするためのローカルホストのリスナーです。
 
-Proxyを稼働させるために以下のコマンドを別のターミナルを開いて実行します。エラーが出ると思いますが一旦無視してください。
+Proxy を稼働させるために以下のコマンドを別のターミナルを開いて実行します。エラーが出ると思いますが一旦無視してください。
 
 ```shell
 $ consul reload
 $ consul connect proxy -sidecar-for dummy-1
 ```
 
-次にdummy-2の定義をしていきます。
+次に dummy-2 の定義をしていきます。
 
 ```hcl
 $ cat << EOF > consul-config-sidecar/dummy-2.json
@@ -141,20 +141,20 @@ $ cat << EOF > consul-config-sidecar/dummy-2.json
 EOF
 ```
 
-Proxyを稼働させるために以下のコマンドを別のターミナルを開いて実行します。エラーが出ると思いますが一旦無視してください。
+Proxy を稼働させるために以下のコマンドを別のターミナルを開いて実行します。エラーが出ると思いますが一旦無視してください。
 
 ```shell
 $ consul reload
 $ consul connect proxy -sidecar-for dummy-2
 ```
 
-これでdummy-1, dummy-2用のサイドカーが起動しました。`http://127.0.0.1:8500/ui/dc1/services`にブラウザでアクセスするとサービスが起動していることがわかります。
+これで dummy-1, dummy-2 用のサイドカーが起動しました。`http://127.0.0.1:8500/ui/dc1/services`にブラウザでアクセスするとサービスが起動していることがわかります。
 
-## Envoyを利用する
+## Envoy を利用する
 
-Envoyを利用する際は`consul connect`のコマンドでEnvoyを指定するだけです。EnvoyはConsulのバイナリには組み込まれていないのでインストールを行う必要があります。
+Envoy を利用する際は`consul connect`のコマンドで Envoy を指定するだけです。Envoy は Consul のバイナリには組み込まれていないのでインストールを行う必要があります。
 
-[こちらの手順](https://www.envoyproxy.io/docs/envoy/latest/start/install)でEnvoyをインストールしてください。
+[こちらの手順](https://www.envoyproxy.io/docs/envoy/latest/start/install)で Envoy をインストールしてください。
 
 既存のサイドカーのプロセスを停止したら、それぞれ別のターミナルで以下のコマンドを実行してください。
 
@@ -167,9 +167,9 @@ $ consul connect envoy -sidecar-for dummy-2 -admin-bind 127.0.0.1:19002
 $ ps aux | grep envoy
 ```
 
-Envoyが起動していることがわかるでしょう。
+Envoy が起動していることがわかるでしょう。
 
-これ以降の章ではEnvoyやBuilt-inを使って様々なSidecar Proxyの機能を試してみたいと思います。
+これ以降の章では Envoy や Built-in を使って様々な Sidecar Proxy の機能を試してみたいと思います。
 
 
 ## 参考リンク

@@ -1,10 +1,10 @@
 # Consul Template
 
-Consul TemplateはこのKVを応用したトリガー処理の一つです。テンプレートに更新内容の雛形を定義しておき、KVに更新が出た際にそれを指定し、その内容を指定したファイルに埋め込むことのできる機能です。
+Consul Template はこの KV を応用したトリガー処理の一つです。テンプレートに更新内容の雛形を定義しておき、KV に更新が出た際にそれを指定し、その内容を指定したファイルに埋め込むことのできる機能です。
 
 簡単な例でまずは試してみましょう。先にインストールを行います。
 
-[こちら](https://github.com/hashicorp/consul-template#installation)の[ダウンロードリンク](https://releases.hashicorp.com/consul-template/)からご自身のOSにあったものをダウンロード、解凍しパスを通してください。
+[こちら](https://github.com/hashicorp/consul-template#installation)の[ダウンロードリンク](https://releases.hashicorp.com/consul-template/)からご自身の OS にあったものをダウンロード、解凍しパスを通してください。
 
 次にテンプレートを用意します。
 
@@ -14,7 +14,7 @@ Updated Value -> {{ key "/my-first-kv/consulis" }}
 EOF
 ```
 
-Workspace用のディレクトリで以下を実行します。プロンプトは戻らないのが正しいです。
+Workspace 用のディレクトリで以下を実行します。プロンプトは戻らないのが正しいです。
 
 ```shell
 $ consul-template -template="my-first-consul.tpl:consulis.txt"
@@ -45,11 +45,11 @@ Updated Value -> made-by-hashicorp
 
 同じ様に更新が確認できるでしょう。
 
-### Consul Templateのユースケース
+### Consul Template のユースケース
 
-さて、Consul Templateを少し試してみましたがどの様なユースケースがあるのでしょうか？実はユースケースはかなり多岐に渡ります。
+さて、Consul Template を少し試してみましたがどの様なユースケースがあるのでしょうか？実はユースケースはかなり多岐に渡ります。
 
-Consul TemplateはConsul配下のデータセンター、ノードやサービスの情報を収集することができ、これを利用することでConsulのサービス構成に何らかの変更があった際に特定のファイルを自動で生成することができます。
+Consul Template は Consul 配下のデータセンター、ノードやサービスの情報を収集することができ、これを利用することで Consul のサービス構成に何らかの変更があった際に特定のファイルを自動で生成することができます。
 
 まずは環境の情報の取得をしてみましょう。
 
@@ -68,7 +68,7 @@ cat <<EOF > all-services.tpl
 EOF
 ```
 
-これを使ってconsul-templateを実行してみましょう。
+これを使って consul-template を実行してみましょう。
 
 ```shell
 $ consul-template -template="all-services.tpl:output/all-services.txt" -once
@@ -108,26 +108,26 @@ dc2
 
 結果は上記の異なるはずですがこの環境に関する情報がダンプ出来たはずです。
 
-### Nginxの設定ファイルを自動生成する
+### Nginx の設定ファイルを自動生成する
 
-さて、ここまでconsul-templateの基本を見てきましたが、この機能を使ってConsul内のサービス構成の更新情報を取得しHAProxyやNginxの設定ファイルを自動更新して反映させるといった運用を自動化できます。またVaultと連携をさせることでVaultから発行した証明書をLBにセットするなども自動で可能です。
+さて、ここまで consul-template の基本を見てきましたが、この機能を使って Consul 内のサービス構成の更新情報を取得し HAProxy や Nginx の設定ファイルを自動更新して反映させるといった運用を自動化できます。また Vault と連携をさせることで Vault から発行した証明書を LB にセットするなども自動で可能です。
 
-ここではNginxのLoadBalancer機能で試してみましょう。
+ここでは Nginx の LoadBalancer 機能で試してみましょう。
 
-ここでは先ほど立ち上げた`Foo`と`Bar`のコンテナのロードバランサーとしてローカルで起動するNginxを使います。
+ここでは先ほど立ち上げた`Foo`と`Bar`のコンテナのロードバランサーとしてローカルで起動する Nginx を使います。
 
->Nginxが入っていない方はこちらからインストールしてください。
+>Nginx が入っていない方はこちらからインストールしてください。
 >* [Linux](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/)
 >* Mac: `brew install nginx`
 >* [Windows](http://nginx.org/en/docs/windows.html)
 
-それぞれのOSにあった起動方法で起動します。以下はmacOSの例です。
+それぞれの OS にあった起動方法で起動します。以下は macOS の例です。
 
 ```shell
 $ sudo nginx
 ```
 
-それぞれのOSでNginxの設定ファイルのディレクトリを探して下さい。Macの場合はこちらです。
+それぞれの OS で Nginx の設定ファイルのディレクトリを探して下さい。Mac の場合はこちらです。
 
 ```shell
 $ cd /usr/local/etc/nginx
@@ -158,7 +158,7 @@ events{
 EOF
 ```
 
-これがConsul Templateファイルです。次にConsul Templateの設定ファイルをworkspaceディレクトリに作ります。
+これが Consul Template ファイルです。次に Consul Template の設定ファイルを workspace ディレクトリに作ります。
 
 ```shell
 cat <<EOF > path/to/workspace/consul-template-config.hcl
@@ -180,14 +180,14 @@ EOF
 ```
 
 
-ローカルのコンサルの構成情報を250msに一度取りに行きテンプレートから`nginx.conf`を生成し、nginxを再起動しています。`command`の再起動コマンドは各OSに合わせてください。
+ローカルのコンサルの構成情報を 250ms に一度取りに行きテンプレートから`nginx.conf`を生成し、nginx を再起動しています。`command`の再起動コマンドは各 OS に合わせてください。
 
 
 ```shell
 $ cat nginx.conf
 ```
 
-Nginxの設定ファイルがデフォルトであることを確認してください。次にConsul Templateを起動します。
+Nginx の設定ファイルがデフォルトであることを確認してください。次に Consul Template を起動します。
 
 ```shell
 $ consul-template -config=consul-template-config.hcl
@@ -220,7 +220,7 @@ events{
 }
 ```
 
-Consul Templateにより以上の様に書き換わっているはずです。
+Consul Template により以上の様に書き換わっているはずです。
 
 アクセスしてみましょう。
 
@@ -249,7 +249,7 @@ $ docker build -t nginx-image .
 $ docker run --name nginx-hoge -d -p 7070:80 nginx-image
 ```
 
-Consulにサービス登録します。
+Consul にサービス登録します。
 
 ```shell
 $ consul services register \
@@ -314,11 +314,11 @@ $ curl localhost:80
 </html>
 ```
 
-Hogeのコンテナに負荷分散されるはずです。
+Hoge のコンテナに負荷分散されるはずです。
 
 余裕のある方は`consul services deregister -id=***`コマンドでサービスを一つ除外して同様に設定ファイルとリクエストのレスポンスを確認してみましょう。
 
-このようにConsul Templateを利用するとConsul内にある様々なサービスとそれに関連する外部の設定ファイルを自動で更新同期することが可能となります。またConsul TemplateはVaultとも連携可能でVaultが発行する暗号化のキーや証明書を同様に自動で配布することができます。
+このように Consul Template を利用すると Consul 内にある様々なサービスとそれに関連する外部の設定ファイルを自動で更新同期することが可能となります。また Consul Template は Vault とも連携可能で Vault が発行する暗号化のキーや証明書を同様に自動で配布することができます。
 
 ## 参考リンク
 * [KV](https://www.consul.io/docs/agent/kv.html)

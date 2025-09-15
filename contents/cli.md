@@ -1,8 +1,8 @@
-# Consul CLIを色々と試す
+# Consul CLI を色々と試す
 
-ここではconsul cliの基本的な使い方のガイドを通してConsulの様々な機能を試してみたいと思います。
+ここでは consul cli の基本的な使い方のガイドを通して Consul の様々な機能を試してみたいと思います。
 
-まずはクラスタ構成がConsulを立ち上げてみます。
+まずはクラスタ構成が Consul を立ち上げてみます。
 
 ```shell
 $ curl https://raw.githubusercontent.com/hashicorp/consul/master/demo/docker-compose-cluster/docker-compose.yml > docker-compose.yml
@@ -12,7 +12,7 @@ $ docker-compose up
 
 ## completion
 
-Consulではコマンド入力をサポートするための入力補足を用意しています。以下のコマンドでインストールしてみましょう。
+Consul ではコマンド入力をサポートするための入力補足を用意しています。以下のコマンドでインストールしてみましょう。
 
 ```shell
 $ consul -autocomplete-install
@@ -22,7 +22,7 @@ $ consul -autocomplete-install
 
 ## info
 
-まずはConsulのクラスタ情報の概要を確認するためのコマンドです。
+まずは Consul のクラスタ情報の概要を確認するためのコマンドです。
 
 ```shell
 $ consul info
@@ -102,11 +102,11 @@ serf_wan:
 ```
 </details>
 
-このコマンドでは`Agent`, `Raft`, `Serf`などの情報を概要レベルで確認することが出来ます。`Raft`はデータのレプリケーションやleader electionを行うためのプロトコルです。`Serf`はGossipプロトコルの内部で利用されているライブラリで、Consulの状態をクラスタで共有するための仕組みです。
+このコマンドでは`Agent`, `Raft`, `Serf`などの情報を概要レベルで確認することが出来ます。`Raft`はデータのレプリケーションや leader election を行うためのプロトコルです。`Serf`は Gossip プロトコルの内部で利用されているライブラリで、Consul の状態をクラスタで共有するための仕組みです。
 
 ## members
 
-次はConsulのクラスタやクラアイントのリストを表示させるコマンドです。
+次は Consul のクラスタやクラアイントのリストを表示させるコマンドです。
 
 ```console
 $ consul members
@@ -119,7 +119,7 @@ b51ccbf4f1a3  172.27.0.6:8301  alive   client  1.6.0  2         dc1  <default>
 b6075d14f88b  172.27.0.5:8301  alive   client  1.6.0  2         dc1  <default>
 ```
 
-ここではServerノードとエージェントが入っているクライアントも含まれています。Statusは`alive`, `left`, `failed`のいずれかがあります。一つコンテナを停止してみましょう。`Node`がコンテナのIDになっています。いずれかをメモしましょう。
+ここでは Server ノードとエージェントが入っているクライアントも含まれています。Status は`alive`, `left`, `failed`のいずれかがあります。一つコンテナを停止してみましょう。`Node`がコンテナの ID になっています。いずれかをメモしましょう。
 
 ```shell
 $ docker stop 82963a2d4324
@@ -136,7 +136,7 @@ b51ccbf4f1a3  172.27.0.6:8301  alive   client  1.6.0  2         dc1  <default>
 b6075d14f88b  172.27.0.5:8301  alive   client  1.6.0  2         dc1  <default>
 ```
 
-`failed`に変化したことがわかるでしょう。しばらくするとAutopilot機能により自動的に`left`となりクラスタから切り離されます。Autopilot機能はこのあともう少し見ていきます。
+`failed`に変化したことがわかるでしょう。しばらくすると Autopilot 機能により自動的に`left`となりクラスタから切り離されます。Autopilot 機能はこのあともう少し見ていきます。
 
 
 `-detailed`オプションをつけることで詳細な情報を見ることが出来ます。一旦`Ctr+C`で全コンテナを停止して再起動しましょう。
@@ -148,7 +148,7 @@ $ docker-compose up
 
 ## catalog
 
-catalogコマンドはConsulのサービスカタログにアクセスするためのコマンドです。
+catalog コマンドは Consul のサービスカタログにアクセスするためのコマンドです。
 
 ```console
 $ consul catalog datacenters
@@ -202,7 +202,7 @@ Node          ID        Address     DC
 
 ## monitor
 
-monitorコマンドは直近のログを出力してストリームするためのコマンドです。
+monitor コマンドは直近のログを出力してストリームするためのコマンドです。
 
 ```console
 $ consul monitor
@@ -224,18 +224,18 @@ $ consul monitor -log-level=debug
 
 ## rtt
 
-`rtt`はRound Trip Timeの略です。Consulのノード間の通信のRTTを推定するためのツールです。まずはノードのIDを取得しましょう。任意の2つのIDをメモしてコマンドの引数にセットします。
+`rtt`は Round Trip Time の略です。Consul のノード間の通信の RTT を推定するためのツールです。まずはノードの ID を取得しましょう。任意の 2 つの ID をメモしてコマンドの引数にセットします。
 
 ```console
 $ consul rtt 82963a2d4324 8a56d570dc47
 Estimated 6eed7e05c966 <-> 268b3f573711 rtt: 0.989 ms (using LAN coordinates)
 ```
 
-Consulでは`network tomograpyh`という仕組みを使って計算し、Serfを通してクラスタに伝達されます。詳細は[こちら](https://www.consul.io/docs/internals/coordinates.html)を見てください。
+Consul では`network tomograpyh`という仕組みを使って計算し、Serf を通してクラスタに伝達されます。詳細は[こちら](https://www.consul.io/docs/internals/coordinates.html)を見てください。
 
 ## operator
 
-operatorコマンドはraftなどのConsulのサブシステムを扱うための運用者向けのコマンドです。
+operator コマンドは raft などの Consul のサブシステムを扱うための運用者向けのコマンドです。
 
 まずは`raft`を扱ってみます。`list-peers`で現在のクラスタ内の状況を確認できます。
 
@@ -247,11 +247,11 @@ Node          ID                                    Address          State     V
 6eed7e05c966  1a358267-3d7a-3288-2ba1-db1a21a16bc4  172.28.0.7:8300  follower  true   3
 ```
 
-`State`はクラスタ内の役割、`Voter`はそのノードがLeader Electionのメンバーかどうかを表示しています。OSSだと全てTrueになります。興味がある方は[Enterprise版機能の紹介](https://docs.google.com/presentation/d/1EdCRjc9nCBf9txf4xk__8BOUFYr5WhObsjz4IliAMgg/edit?usp=sharing)を見てください。
+`State`はクラスタ内の役割、`Voter`はそのノードが Leader Election のメンバーかどうかを表示しています。OSS だと全て True になります。興味がある方は[Enterprise 版機能の紹介](https://docs.google.com/presentation/d/1EdCRjc9nCBf9txf4xk__8BOUFYr5WhObsjz4IliAMgg/edit?usp=sharing)を見てください。
 
-次は`autopilot`です。Autopilotは意図せず停止してしまったサーバのclean upやクラスタの状態のモニタリングや安定したサーバの情報を提供するなどを行います。
+次は`autopilot`です。Autopilot は意図せず停止してしまったサーバの clean up やクラスタの状態のモニタリングや安定したサーバの情報を提供するなどを行います。
 
-この機能に対して様々設定を行いますがoperatorコマンドではその設定の更新や確認を行うことが出来ます。
+この機能に対して様々設定を行いますが operator コマンドではその設定の更新や確認を行うことが出来ます。
 
 ```console
 $ consul operator autopilot get-config
@@ -264,7 +264,7 @@ DisableUpgradeMigration = false
 UpgradeVersionTag = ""
 ```
 
-`CleanupDeadServers`は`failed`になっているサーバを自動でクラスタから切り離す機能です。デフォルトだと`force-leave`というコマンドで明示的に切り離すか72時間後に切り離されるまで待たないといけません。
+`CleanupDeadServers`は`failed`になっているサーバを自動でクラスタから切り離す機能です。デフォルトだと`force-leave`というコマンドで明示的に切り離すか 72 時間後に切り離されるまで待たないといけません。
 
 この設定を`false`にして無効にします。
 
@@ -272,7 +272,7 @@ UpgradeVersionTag = ""
 $ consul operator autopilot set-config -cleanup-dead-servers=false
 ```
 
-`Type`が`server`のNodeを一つ停止してみましょう。
+`Type`が`server`の Node を一つ停止してみましょう。
 
 ```console
 $ consul members
@@ -310,13 +310,13 @@ e52211884a6b  172.28.0.3:8301  alive   client  1.6.0  2         dc1  <default>
 $ consul force-leave 76d8c6bcb5d3
 ```
 
-`left`に変更されたはずです。話が少しそれましたが`consul operator autopilot`ではこのようにAutopilot機能の設定変更や確認を行うことが出来ます。
+`left`に変更されたはずです。話が少しそれましたが`consul operator autopilot`ではこのように Autopilot 機能の設定変更や確認を行うことが出来ます。
 
 オートパイロットについては[こちら](https://learn.hashicorp.com/consul/day-2-operations/autopilot)を参考にしてください。
 
 ## snapshot
 
-最後はバックアップを取得するためのコマンドです。またRestoreも出来ます。
+最後はバックアップを取得するためのコマンドです。また Restore も出来ます。
 
 まずはバックアップの取得です。
 
@@ -328,7 +328,7 @@ dummy
 $ consul snapshot save test.snap
 ```
 
-inspectでスナップショットの情報を見ることが出来ます。
+inspect でスナップショットの情報を見ることが出来ます。
 
 ```shell
 $ consul snapshot inspect test.snap
@@ -343,7 +343,7 @@ $ consul catalog services
 consul
 ```
 
-restoreコマンドでリストアします。
+restore コマンドでリストアします。
 
 ```shell
 $ consul snapshot restore test.snap
@@ -357,9 +357,9 @@ consul
 dummy
 ```
 
-リストアされました。Enterprise版ではagentコマンドを使ってデーモンプロセスとして定期的なバックアップ取得の自動化やバックアップ保存先の指定などの細かい設定を行うことが出来ます。
+リストアされました。Enterprise 版では agent コマンドを使ってデーモンプロセスとして定期的なバックアップ取得の自動化やバックアップ保存先の指定などの細かい設定を行うことが出来ます。
 
-興味がある方は[Enterprise版機能の紹介](https://docs.google.com/presentation/d/1EdCRjc9nCBf9txf4xk__8BOUFYr5WhObsjz4IliAMgg/edit?usp=sharing)を見てください。
+興味がある方は[Enterprise 版機能の紹介](https://docs.google.com/presentation/d/1EdCRjc9nCBf9txf4xk__8BOUFYr5WhObsjz4IliAMgg/edit?usp=sharing)を見てください。
 
 最後に`Ctr+C`で抜けて全コンテナを停止しておきましょう。
 

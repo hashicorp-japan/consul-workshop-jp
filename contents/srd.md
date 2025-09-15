@@ -1,18 +1,18 @@
-# Consul Service Discoveryを使ってみる
+# Consul Service Discovery を使ってみる
 
-Consulの機能は多岐に渡りますが、Service Discoveryはコアの機能です。Service Discoeryの機能によりシステムを構成するコンポーネント同士はService名ベースでの接続が可能となります。
+Consul の機能は多岐に渡りますが、Service Discovery はコアの機能です。Service Discoery の機能によりシステムを構成するコンポーネント同士は Service 名ベースでの接続が可能となります。
 
-ここではサービスをいくつか登録し、実際のDNSやヘルスチェックなどの機能を試してみます。
+ここではサービスをいくつか登録し、実際の DNS やヘルスチェックなどの機能を試してみます。
 
-ここではローカルにNginxを2インスタンス起動させConsulからService Discoveryの機能を試してみます。
+ここではローカルに Nginx を 2 インスタンス起動させ Consul から Service Discovery の機能を試してみます。
 
-Consulサーバを立ち上げます。
+Consul サーバを立ち上げます。
 
 ```shell
 consul agent -dev
 ```
 
-Dockerで二つのインタンスを起動させます。
+Docker で二つのインタンスを起動させます。
 
 ```shell
 $ cd assets
@@ -30,7 +30,7 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 ac31d5eec216        nginx-foo        "nginx -g 'daemon of…"   27 seconds ago      Up 26 seconds       0.0.0.0:8080->80/tcp   nginx_foo
 ```
 
-curlで両インスタンスからのレスポンスを確認ておきます。
+curl で両インスタンスからのレスポンスを確認ておきます。
 
 ```console
 $ curl 127.0.0.1:8080/index.html
@@ -49,9 +49,9 @@ $ curl 127.0.0.1:9090/index.html
 </html>
 ```
 
-それではこれらConsulにRegistrationしてみます。
+それではこれら Consul に Registration してみます。
 
-以下のコマンドを実行し、Consulにサービスを登録します。
+以下のコマンドを実行し、Consul にサービスを登録します。
 ```shell
 $ consul services register \
 -name=nginx \
@@ -72,7 +72,7 @@ $ consul services register \
 -tag=nginx
 ```
 
-Consulのエンドポイントを確認してサービスが登録されていることを確認してみましょう。GUIでも同様のことが出来ます。
+Consul のエンドポイントを確認してサービスが登録されていることを確認してみましょう。GUI でも同様のことが出来ます。
 ```console
 $ curl http://127.0.0.1:8500/v1/catalog/service/nginx | jq
 
@@ -112,7 +112,7 @@ $ curl http://127.0.0.1:8500/v1/catalog/service/nginx | jq
 ]
 ```
 
-digで確かめてみます。
+dig で確かめてみます。
 
 ```console
 $ dig @127.0.0.1 -p 8600 nginx.service.consul. SRV
@@ -146,11 +146,11 @@ Takayukis-MBP.node.dc1.consul. 0 IN	TXT	"consul-network-segment="
 ;; MSG SIZE  rcvd: 251
 ```
 
-`nginx.service.consul`に対してFooとBarの二つのインスタンスにアクセスできることがわかります。
+`nginx.service.consul`に対して Foo と Bar の二つのインスタンスにアクセスできることがわかります。
 
-## HealthCheckの設定
+## HealthCheck の設定
 
-次にHealthCheckの設定を行います。以下のJsonファイルを作成して下さい。
+次に HealthCheck の設定を行います。以下の Json ファイルを作成して下さい。
 
 ```shell
 $ cat << EOF > check_foo.json 
@@ -184,14 +184,14 @@ $ cat << EOF > check_bar.json
 EOF
 ```
 
-`http`で指定したエンドポイントに対して10秒に一度ヘルスチェックを行う設定です。上記の設定を反映させてみます。
+`http`で指定したエンドポイントに対して 10 秒に一度ヘルスチェックを行う設定です。上記の設定を反映させてみます。
 
 ```shell
 $ curl -X PUT --data-binary @check_foo.json http://127.0.0.1:8500/v1/agent/service/register
 $ curl -X PUT --data-binary @check_bar.json http://127.0.0.1:8500/v1/agent/service/register
 ```
 
-ヘルスチェックの確認をしてみましょう。GUIでも見ることができます。
+ヘルスチェックの確認をしてみましょう。GUI でも見ることができます。
 ```shell
 $ curl http://127.0.0.1:8500/v1/health/checks/nginx | jq .
 ```
@@ -232,7 +232,7 @@ $ curl http://127.0.0.1:8500/v1/health/checks/nginx | jq .
 ```
 </details>
 
-次にfooのコンテナを停止させてみます。
+次に foo のコンテナを停止させてみます。
 
 ```shell
 $ docker stop nginx-foo-1
@@ -279,7 +279,7 @@ $ curl http://127.0.0.1:8500/v1/health/checks/nginx | jq .
 ```
 </details>
 
-fooのコンテナの`status`がCriticalに変化しています。この状態でdigるとどうなるでしょうか。
+foo のコンテナの`status`が Critical に変化しています。この状態で dig るとどうなるでしょうか。
 
 ```shell
 $ dig @127.0.0.1 -p 8600 nginx.service.consul SRV
@@ -310,7 +310,7 @@ Takayukis-MBP.node.dc1.consul. 0 IN	TXT	"consul-network-segment="
 ;; MSG SIZE  rcvd: 150
 ```
 
-一つのサーバのみ返ってきており、Consulが停止したサーバを自動で切り離したことがわかります。再起動しましょう。
+一つのサーバのみ返ってきており、Consul が停止したサーバを自動で切り離したことがわかります。再起動しましょう。
 
 ```shell
 $ docker-compose up -d
@@ -348,9 +348,9 @@ Takayukis-MBP.node.dc1.consul. 0 IN	TXT	"consul-network-segment="
 ;; MSG SIZE  rcvd: 251
 ```
 
-正しい状態に戻りました。ConsulのService Registryの機能を使うことでプラットフォームに依存せずサービス名ベースでの相互接続やサービス間のヘルスチェックが可能です。実際のアプリケーションからはConsulを経由して、APIやデータストアなどのシステムコンポーネントにアクセスすることが出来ます。
+正しい状態に戻りました。Consul の Service Registry の機能を使うことでプラットフォームに依存せずサービス名ベースでの相互接続やサービス間のヘルスチェックが可能です。実際のアプリケーションからは Consul を経由して、API やデータストアなどのシステムコンポーネントにアクセスすることが出来ます。
 
-また、Service RegistryだけでなくService Meshを実現するための様々な機能を備えています。
+また、Service Registry だけでなく Service Mesh を実現するための様々な機能を備えています。
 
 
 最後に`Ctr+C`で抜けて全コンテナを停止しておきましょう。

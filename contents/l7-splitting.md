@@ -1,10 +1,10 @@
-# L7 Traffic Managementを試す
+# L7 Traffic Management を試す
 
 次に`service-splliting`の機能を試してみます。この手順を完了させるためには`l7-routing`の手順を完了させておく必要があります。
 
-すでに手順が完了している方は`Ctrl+C`でkillしてから以下のコマンドで両方のプロセスを一旦停止してください。
+すでに手順が完了している方は`Ctrl+C`で kill してから以下のコマンドで両方のプロセスを一旦停止してください。
 
-Service Splittingは各サブセットや異なるサービスに対して重み付けルーティングを行うための機能です。これを利用することでバージョンアップや、アプリケーションをリライトして別のサービスとして一度立ち上げるなどの際に安全にトラフィックの切り替えを行うことができます。
+Service Splitting は各サブセットや異なるサービスに対して重み付けルーティングを行うための機能です。これを利用することでバージョンアップや、アプリケーションをリライトして別のサービスとして一度立ち上げるなどの際に安全にトラフィックの切り替えを行うことができます。
 
 ```shell
 $ docker-compose down
@@ -77,9 +77,9 @@ Greetings From API -> <200,hi i am v2
 
 `v1`,`v2`にリクエストが振られています。
 
-## Splittingの設定を作成する
+## Splitting の設定を作成する
 
-次にSplittingの設定を作ります。ここでは100:0, 50:50, 0:100の割合で各サブセットにリクエストを分散する設定を行なっています。
+次に Splitting の設定を作ります。ここでは 100:0, 50:50, 0:100 の割合で各サブセットにリクエストを分散する設定を行なっています。
 
 ```shell
 $ cat << EOF > 100-0.json
@@ -134,13 +134,13 @@ $ cat << EOF > 0-100.json
 EOF
 ```
 
-これをConsulに順番に反映させてみましょう。
+これを Consul に順番に反映させてみましょう。
 
 ```shell
 $ curl localhost:8500/v1/config -XPUT -d @100-0.json
 ```
 
-これで100:0でv1にリクエストが振られるようになるはずです。
+これで 100:0 で v1 にリクエストが振られるようになるはずです。
 
 ```console
 $ curl  127.0.0.1:9090/ --header "canary: 1"
@@ -149,7 +149,7 @@ Greetings From API -> <200,hi i am v1
 
 何度か実行して動作を確認してください。
 
-次に50:50にします。
+次に 50:50 にします。
 
 ```shell
 $ curl localhost:8500/v1/config -XPUT -d @50-50.json
@@ -165,7 +165,7 @@ $ curl  127.0.0.1:9090/ --header "canary: 1"
 Greetings From API -> <200,hi i am v2
 ```
 
-最後に0:100でv2にのみリクエストが行くようにします。
+最後に 0:100 で v2 にのみリクエストが行くようにします。
 
 ```shell
 $ curl localhost:8500/v1/config -XPUT -d @0-100.json
@@ -178,7 +178,7 @@ $ curl  127.0.0.1:9090/ --header "canary: 1"
 Greetings From API -> <200,hi i am v2
 ```
 
-以上のように`service-splitting`の機能を使ってアプリケーションのロールアウトを実施してみました。今回はサブセットを利用しましたが、コードベースやリライトなどを実施した後の異なるサービス同士でもSplittingを行うことも可能です。
+以上のように`service-splitting`の機能を使ってアプリケーションのロールアウトを実施してみました。今回はサブセットを利用しましたが、コードベースやリライトなどを実施した後の異なるサービス同士でも Splitting を行うことも可能です。
 
 ## 参考リンク
 * [Service Splitting](https://www.consul.io/docs/agent/config-entries/service-splitter.html)
